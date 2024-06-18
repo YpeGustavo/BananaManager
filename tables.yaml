@@ -1,0 +1,9 @@
+tables:
+  - name: your_table
+    pretty_name: "Your Table"
+
+  - name: another_table
+    pretty_name: "Another Table"
+
+  - name: yet_another_table
+    pretty_name: "Yet Another Table"
