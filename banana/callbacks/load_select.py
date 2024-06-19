@@ -1,5 +1,5 @@
 from dash import Output, Input, callback
-from ..configs import TABLES
+from ..models import TABLES
 
 
 @callback(

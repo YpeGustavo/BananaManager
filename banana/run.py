@@ -1,7 +1,7 @@
 from dash import Dash
 
 from .layout import layout
-from .configs import CONFIG
+from .config import CONFIG
 
 
 def run():

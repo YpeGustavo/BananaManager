@@ -1,13 +1,9 @@
 from typing import Optional, Self
 
-from pydantic import BaseModel, PositiveInt, model_validator
+from pydantic import BaseModel, model_validator
+import yaml
 
-
-class Config(BaseModel):
-    connection_string: str
-    debug: bool = False
-    port: PositiveInt = 4000
-    tables_file: str = "tables.yaml"
+from .config import CONFIG
 
 
 class BananaColumn(BaseModel):
@@ -32,3 +28,9 @@ class BananaTable(BaseModel):
         if self.pretty_name is None:
             self.pretty_name = self.name
         return self
+
+
+with open(CONFIG.tables_file, "r") as file:
+    data = yaml.safe_load(file)
+    TABLES = [BananaTable(**table) for table in data["tables"]]
+    print("\n", TABLES)
