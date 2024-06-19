@@ -5,14 +5,14 @@ layout = html.Div(
     [
         html.H1("Cadastro"),
         dcc.Dropdown(
-            id="cadastro--select", placeholder="Select a table", clearable=False
+            id="banana--select", placeholder="Select a table", clearable=False
         ),
         html.Table(
             [
-                html.Thead(id="cadastro--table-head"),
-                html.Tbody(id="cadastro--table-body"),
+                html.Thead(id="banana--table-head"),
+                html.Tbody(id="banana--table-body"),
             ],
-            id="cadastro--table",
+            id="banana--table",
         ),
     ],
 )

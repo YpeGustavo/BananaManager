@@ -6,9 +6,9 @@ from ..configs import CONFIG
 
 
 @callback(
-    Output("cadastro--table-head", "children"),
-    Output("cadastro--table-body", "children"),
-    Input("cadastro--select", "value"),
+    Output("banana--table-head", "children"),
+    Output("banana--table-body", "children"),
+    Input("banana--select", "value"),
     prevent_initial_call=True,
 )
 def load_table(tablename: str):

@@ -3,8 +3,8 @@ from ..configs import TABLES
 
 
 @callback(
-    Output("cadastro--select", "options"),
-    Input("cadastro--select", "style"),
+    Output("banana--select", "options"),
+    Input("banana--select", "style"),
 )
 def load_select(_):
     return [{"label": table.pretty_name, "value": table.name} for table in TABLES]
