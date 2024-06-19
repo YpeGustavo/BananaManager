@@ -14,7 +14,7 @@ from ..configs import CONFIG
 def load_table(tablename: str):
     query = f"select * from {tablename}"
 
-    engine = create_engine(CONFIG["connection_string"])
+    engine = create_engine(CONFIG.connection_string)
     with engine.connect() as conn:
         df = pd.read_sql(query, con=conn)
 

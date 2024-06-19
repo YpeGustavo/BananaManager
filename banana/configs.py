@@ -1,10 +1,17 @@
+from pydantic import BaseModel, PositiveInt
 import yaml
 
 
-with open(r"C:\Users\gusta\Repositórios\Cadastro\config.yaml", "r") as file:
-    CONFIG = yaml.safe_load(file)
-    print(CONFIG)
+class Config(BaseModel):
+    connection_string: str
+    debug: bool = True
+    port: PositiveInt = 8050
+    tables_file: str = "tables.yaml"
 
-with open(r"C:\Users\gusta\Repositórios\Cadastro\tables.yaml", "r") as file:
+
+with open("config.yaml", "r") as file:
+    data = yaml.safe_load(file)
+    CONFIG = Config(**data)
+
+with open(CONFIG.tables_file, "r") as file:
     TABLES = yaml.safe_load(file)
-    print(TABLES)
