@@ -3,7 +3,12 @@ tables:
     pretty_name: "Your Table"
 
   - name: another_table
-    pretty_name: "Another Table"
+    columns:
+      - name: column3
+        pretty_name: "Text Column"
+      - name: column4
+        pretty_name: "Numeric Column"
+        datatype: int
 
   - name: yet_another_table
     pretty_name: "Yet Another Table"
