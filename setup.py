@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="Cadastro",
+    name="banana",
     version="0.0.1",
     author="Gustavo Furtado",
     author_email="gustavofurtado2@gmail.com",
