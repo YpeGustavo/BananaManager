@@ -1,4 +1,4 @@
-from dash import dcc, html, Output, Input, callback
+from dash import Output, Input, callback
 from sqlalchemy import MetaData, Table, create_engine, select
 
 from ..config import CONFIG
@@ -34,7 +34,8 @@ def load_table(tablename: str):
         rows = result.fetchall()
 
     column_defs = [
-        {"header": col.pretty_name, "field": col.name} for col in table_model.columns
+        {"headerName": col.pretty_name, "field": col.name}
+        for col in table_model.columns
     ]
 
     row_data = []
