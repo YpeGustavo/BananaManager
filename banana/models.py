@@ -6,6 +6,17 @@ import yaml
 from .config import CONFIG
 
 
+class BananaPrimaryKey(BaseModel):
+    name: str
+    pretty_name: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_model(self) -> Self:
+        if self.pretty_name is None:
+            self.pretty_name = self.name
+        return self
+
+
 class BananaColumn(BaseModel):
     name: str
     pretty_name: Optional[str] = None
@@ -20,7 +31,7 @@ class BananaColumn(BaseModel):
 
 class BananaTable(BaseModel):
     name: str
-    primary_key: str
+    primary_key: BananaPrimaryKey
     pretty_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
 
@@ -31,10 +42,19 @@ class BananaTable(BaseModel):
         return self
 
 
+class BananaTables(BaseModel):
+    tables: list[BananaTable]
+
+    def __getitem__(self, table_name: str) -> BananaTable:
+        tbs = [table for table in self.tables if table.name == table_name]
+        assert len(tbs) == 1, "Check the name of the table"
+        return tbs[0]
+
+
 try:
     with open(CONFIG.tables_file, "r") as file:
         data = yaml.safe_load(file)
-        TABLES = [BananaTable(**table) for table in data["tables"]]
+        TABLES = BananaTables(**data)
 except FileNotFoundError:
     raise Exception(f"Config file {CONFIG.tables_file} not found.")
 except yaml.YAMLError as exc:

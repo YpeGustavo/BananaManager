@@ -15,17 +15,17 @@ metadata = MetaData()
     Input("banana--select", "value"),
     prevent_initial_call=True,
 )
-def load_table(tablename: str):
+def load_table(table_name: str):
     # Get table model
-    table_model = next(table for table in TABLES if table.name == tablename)
+    table_model = TABLES[table_name]
 
     # Get table schema
     engine = create_engine(CONFIG.connection_string)
-    table_data = Table(tablename, metadata, autoload_with=engine)
+    table_data = Table(table_name, metadata, autoload_with=engine)
 
     # Create select statement
     query = select(
-        getattr(table_data.c, table_model.primary_key),
+        getattr(table_data.c, table_model.primary_key.name),
         *[getattr(table_data.c, col.name) for col in table_model.columns],
     ).select_from(table_data)
 
@@ -37,8 +37,8 @@ def load_table(tablename: str):
     # Define header
     id_col = [
         {
-            "headerName": "Row ID",
-            "valueGetter": {"function": f"params.node.{table_model.primary_key}"},
+            "headerName": table_model.primary_key.pretty_name,
+            "valueGetter": {"function": f"params.node.{table_model.primary_key.name}"},
             "editable": False,
         },
     ]
@@ -49,9 +49,9 @@ def load_table(tablename: str):
     column_defs = id_col + values_cols
 
     # Define Rows
-    cols = [table_model.primary_key] + [col.name for col in table_model.columns]
+    cols = [table_model.primary_key.name] + [col.name for col in table_model.columns]
     row_data = []
     for row in rows:
         row_data.append({col: value for col, value in zip(cols, row)})
 
-    return column_defs, row_data, f"params.data.{table_model.primary_key}"
+    return column_defs, row_data, f"params.data.{table_model.primary_key.name}"

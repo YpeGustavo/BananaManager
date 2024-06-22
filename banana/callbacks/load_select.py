@@ -7,4 +7,6 @@ from ..models import TABLES
     Input("banana--select", "style"),
 )
 def load_select(_):
-    return [{"label": table.pretty_name, "value": table.name} for table in TABLES]
+    return [
+        {"label": table.pretty_name, "value": table.name} for table in TABLES.tables
+    ]

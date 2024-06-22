@@ -1,13 +1,15 @@
 tables:
   - name: your_table
     pretty_name: "Your Table"
-    primary_key: id
+    primary_key:
+      name: id
     columns:
       - name: column1
       - name: column2
 
   - name: another_table
-    primary_key: id
+    primary_key:
+      name: id
     columns:
       - name: column3
         pretty_name: "Text Column"
@@ -17,7 +19,9 @@ tables:
 
   - name: yet_another_table
     pretty_name: "Yet Another Table"
-    primary_key: id
+    primary_key:
+      name: id
+      pretty_name: "Row ID"
     columns:
       - name: column5
       - name: column6

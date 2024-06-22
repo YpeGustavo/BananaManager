@@ -18,7 +18,7 @@ def update_cell(data, table_name):
     data = data[0]
 
     # Find the table model
-    table_model = next(table for table in TABLES if table.name == table_name)
+    table_model = TABLES[table_name]
 
     # Update the database
     engine = create_engine(CONFIG.connection_string)
@@ -27,7 +27,7 @@ def update_cell(data, table_name):
     with engine.connect() as conn:
         stmt = (
             update(table_data)
-            .where(getattr(table_data.c, table_model.primary_key) == data["rowId"])
+            .where(getattr(table_data.c, table_model.primary_key.name) == data["rowId"])
             .values({data["colId"]: data["value"]})
         )
         conn.execute(stmt)
