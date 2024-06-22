@@ -1,4 +1,4 @@
-from dash import html, Output, Input, callback
+from dash import dcc, html, Output, Input, callback
 from sqlalchemy import MetaData, Table, create_engine, select
 
 from ..config import CONFIG
@@ -16,34 +16,56 @@ metadata = MetaData()
 )
 def load_table(tablename: str):
     # Get table model
-    table = next(table for table in TABLES if table.name == tablename)
+    table_model = next(table for table in TABLES if table.name == tablename)
 
     # Get table schema
     engine = create_engine(CONFIG.connection_string)
-    tabledata = Table(tablename, metadata, autoload_with=engine)
+    table_data = Table(tablename, metadata, autoload_with=engine)
 
     # Create select statement
-    if table.columns is None:
-        query = select(tabledata)
-    else:
-        query = select(
-            *[
-                getattr(tabledata.c, col.name).label(col.pretty_name)
-                for col in table.columns
-            ]
-        ).select_from(tabledata)
+    query = select(
+        getattr(table_data.c, table_model.primary_key),
+        *[getattr(table_data.c, col.name) for col in table_model.columns],
+    ).select_from(table_data)
 
-    # Print datatypes
-    print([(col.name, str(col.type)) for col in tabledata.columns])
+    # Get datatype if none was provided
+    for column in table_model.columns:
+        if column.datatype is None:
+            column.datatype = next(
+                str(col.type) for col in table_data.columns if col.name == column.name
+            )
 
-    # Get data
+    # Fetch results
     with engine.connect() as conn:
         result = conn.execute(query)
-        columns = result.keys()
+        rows = result.fetchall()
 
         # Build HTML
-        thead = html.Tr([html.Th(col) for col in columns])
-        tbody = [
-            html.Tr([html.Td(value) for value in row]) for row in result.fetchall()
-        ]
+        thead = html.Tr([html.Th(col.pretty_name) for col in table_model.columns])
+        tbody = []
+
+        # Fill table body
+        for row in rows:
+            tr = []
+            for col, value in zip(table_model.columns, row[1:]):
+                id = {"table": table_model.name, "column": col.name, "row": row[0]}
+
+                match col.datatype.lower():
+                    case "int" | "integer":
+                        td = dcc.Input(
+                            value=value,
+                            id=id,
+                            type="number",
+                            placeholder="null",
+                        )
+                    case "varchar" | "text" | "str" | "string":
+                        td = dcc.Input(
+                            value=value,
+                            id=id,
+                            type="text",
+                            placeholder="null",
+                        )
+
+                tr.append(html.Td(td))
+            tbody.append(html.Tr(tr))
         return [thead, tbody]

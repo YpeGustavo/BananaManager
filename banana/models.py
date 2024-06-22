@@ -20,6 +20,7 @@ class BananaColumn(BaseModel):
 
 class BananaTable(BaseModel):
     name: str
+    primary_key: str
     pretty_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
 
