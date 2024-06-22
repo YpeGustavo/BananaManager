@@ -30,7 +30,11 @@ class BananaTable(BaseModel):
         return self
 
 
-with open(CONFIG.tables_file, "r") as file:
-    data = yaml.safe_load(file)
-    TABLES = [BananaTable(**table) for table in data["tables"]]
-    print("\n", TABLES)
+try:
+    with open(CONFIG.tables_file, "r") as file:
+        data = yaml.safe_load(file)
+        TABLES = [BananaTable(**table) for table in data["tables"]]
+except FileNotFoundError:
+    raise Exception(f"Config file {CONFIG.tables_file} not found.")
+except yaml.YAMLError as exc:
+    raise Exception(f"Error parsing YAML config file: {exc}")
