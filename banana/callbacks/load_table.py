@@ -9,8 +9,8 @@ metadata = MetaData()
 
 
 @callback(
-    Output("banana--table-head", "children"),
-    Output("banana--table-body", "children"),
+    Output("banana--table", "columnDefs"),
+    Output("banana--table", "rowData"),
     Input("banana--select", "value"),
     prevent_initial_call=True,
 )
@@ -28,44 +28,19 @@ def load_table(tablename: str):
         *[getattr(table_data.c, col.name) for col in table_model.columns],
     ).select_from(table_data)
 
-    # Get datatype if none was provided
-    for column in table_model.columns:
-        if column.datatype is None:
-            column.datatype = next(
-                str(col.type) for col in table_data.columns if col.name == column.name
-            )
-
     # Fetch results
     with engine.connect() as conn:
         result = conn.execute(query)
         rows = result.fetchall()
 
-        # Build HTML
-        thead = html.Tr([html.Th(col.pretty_name) for col in table_model.columns])
-        tbody = []
+    column_defs = [
+        {"header": col.pretty_name, "field": col.name} for col in table_model.columns
+    ]
 
-        # Fill table body
-        for row in rows:
-            tr = []
-            for col, value in zip(table_model.columns, row[1:]):
-                id = {"table": table_model.name, "column": col.name, "row": row[0]}
+    row_data = []
+    for row in rows:
+        row_data.append(
+            {col.name: value for col, value in zip(table_model.columns, row[1:])}
+        )
 
-                match col.datatype.lower():
-                    case "int" | "integer":
-                        td = dcc.Input(
-                            value=value,
-                            id=id,
-                            type="number",
-                            placeholder="null",
-                        )
-                    case "varchar" | "text" | "str" | "string":
-                        td = dcc.Input(
-                            value=value,
-                            id=id,
-                            type="text",
-                            placeholder="null",
-                        )
-
-                tr.append(html.Td(td))
-            tbody.append(html.Tr(tr))
-        return [thead, tbody]
+    return column_defs, row_data

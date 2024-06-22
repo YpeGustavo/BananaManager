@@ -1,18 +1,19 @@
 from dash import dcc, html
+from dash_ag_grid import AgGrid
 
 
 layout = html.Div(
     [
         html.H1("Cadastro"),
         dcc.Dropdown(
-            id="banana--select", placeholder="Select a table", clearable=False
+            id="banana--select",
+            placeholder="Select a table",
+            clearable=False,
         ),
-        html.Table(
-            [
-                html.Thead(id="banana--table-head"),
-                html.Tbody(id="banana--table-body"),
-            ],
+        AgGrid(
             id="banana--table",
+            defaultColDef={"filter": True, "sortable": True, "editable": True},
+            dashGridOptions={"pagination": True},
         ),
     ],
 )
