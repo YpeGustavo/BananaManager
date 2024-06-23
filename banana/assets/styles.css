@@ -41,29 +41,38 @@ body {
 .menu {
     display: flex;
     flex-direction: column;
+    list-style: none;
 }
 
-.menu-item, .menu-subitem, .menu-subsubitem {
-    padding: 10px;
-    margin: 5px 0;
-    cursor: pointer;
-}
 
 .menu-item {
-    font-weight: bold;
-}
-
-.menu-subitem {
-    padding-left: 20px;
-}
-
-.menu-subsubitem {
-    padding-left: 40px;
-}
-
-.menu-item:hover, .menu-subitem:hover, .menu-subsubitem:hover {
+    padding: 10px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+  
+  .menu-item .icon {
+    margin-right: 10px;
+  }
+  
+  .menu-item .label {
+    font-weight: 500;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .menu-item:hover {
     background-color: #e9ecef;
-}
+    border-radius: 5px;
+  }
+  
+  .menu-item.selected {
+    background-color: #d1e7dd;
+    border-radius: 5px;
+  }
+
+
 
 .main-content {
     flex: 1;

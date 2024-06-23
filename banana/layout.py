@@ -11,7 +11,7 @@ layout = [
     html.Div(
         [
             html.Div(
-                html.Div(
+                html.Ul(
                     id="banana--menu",
                     className="menu",
                 ),
