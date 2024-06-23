@@ -1,9 +1,24 @@
 from typing import Optional, Self
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, PositiveInt
 import yaml
 
-from .config import CONFIG
+
+def read_yaml(file) -> dict:
+    try:
+        with open(file, "r") as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        raise Exception(f"Config file `{file}` not found.")
+    except yaml.YAMLError as exc:
+        raise Exception(f"Error parsing YAML config file: {exc}")
+
+
+class Config(BaseModel):
+    connection_string: str
+    debug: bool = False
+    port: PositiveInt = 4000
+    tables_file: str = "tables.yaml"
 
 
 class BananaPrimaryKey(BaseModel):
@@ -49,13 +64,3 @@ class BananaTables(BaseModel):
         tbs = [table for table in self.tables if table.name == table_name]
         assert len(tbs) == 1, "Check the name of the table"
         return tbs[0]
-
-
-try:
-    with open(CONFIG.tables_file, "r") as file:
-        data = yaml.safe_load(file)
-        TABLES = BananaTables(**data)
-except FileNotFoundError:
-    raise Exception(f"Config file {CONFIG.tables_file} not found.")
-except yaml.YAMLError as exc:
-    raise Exception(f"Error parsing YAML config file: {exc}")
