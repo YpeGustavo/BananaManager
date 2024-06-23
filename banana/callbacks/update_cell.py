@@ -10,7 +10,7 @@ metadata = MetaData()
 
 @callback(
     Input("banana--table", "cellValueChanged"),
-    State("banana--select", "value"),
+    State("banana--location", "pathname"),
 )
 def update_cell(data, table_name):
     # Validate data
@@ -18,6 +18,7 @@ def update_cell(data, table_name):
     data = data[0]
 
     # Find the table model
+    table_name = table_name[1:]
     table_model = TABLES[table_name]
 
     # Update the database

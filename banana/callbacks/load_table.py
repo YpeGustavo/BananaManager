@@ -12,11 +12,12 @@ metadata = MetaData()
     Output("banana--table", "columnDefs"),
     Output("banana--table", "rowData"),
     Output("banana--table", "getRowId"),
-    Input("banana--select", "value"),
+    Input("banana--location", "pathname"),
     prevent_initial_call=True,
 )
 def load_table(table_name: str):
     # Get table model
+    table_name = table_name[1:]
     table_model = TABLES[table_name]
 
     # Get table schema
