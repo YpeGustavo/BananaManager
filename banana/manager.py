@@ -59,14 +59,14 @@ class Banana(BaseModel):
             table_data = Table(table_name, metadata, autoload_with=engine)
 
             # Create select statement
-            query = select(
+            stmt = select(
                 getattr(table_data.c, table_model.primary_key.name),
                 *[getattr(table_data.c, col.name) for col in table_model.columns],
             ).select_from(table_data)
 
             # Fetch results
             with engine.connect() as conn:
-                result = conn.execute(query)
+                result = conn.execute(stmt)
                 rows = result.fetchall()
 
             # Define header
@@ -105,8 +105,8 @@ class Banana(BaseModel):
             data = data[0]
 
             # Find the table model
-            data = read_yaml(self.config.tables_file)
-            tables = BananaTables(**data)
+            tables_data = read_yaml(self.config.tables_file)
+            tables = BananaTables(**tables_data)
             table_name = table_name[1:]
             table_model = tables[table_name]
 
