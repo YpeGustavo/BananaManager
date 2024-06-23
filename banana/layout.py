@@ -19,7 +19,7 @@ layout = [
             ),
             html.Div(
                 [
-                    html.Div("Metadados da Tabela"),
+                    html.Div(id="metadata-placeholder"),
                     AgGrid(
                         id="banana--table",
                         defaultColDef={

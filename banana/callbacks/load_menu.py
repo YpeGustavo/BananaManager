@@ -8,9 +8,6 @@ from ..models import TABLES
 )
 def load_menu(_):
     return [
-        html.Li(
-            html.A(table.pretty_name, href=f"/{table.name}", className="label"),
-            className="menu-item",
-        )
+        html.A(table.pretty_name, href=f"/{table.name}", className="menu-item")
         for table in TABLES.tables
     ]

@@ -1,81 +1,67 @@
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .navbar {
-    background-color: #3f4c5b;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
+  background-color: #3f4c5b;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
 }
 
 .logo {
-    font-size: 24px;
+  font-size: 24px;
 }
 
 .container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 .drawer {
-    width: 250px;
-    background-color: #f8f9fa;
-    padding: 20px;
-    overflow-y: auto;
+  width: 250px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .menu {
-    display: flex;
-    flex-direction: column;
-    list-style: none;
+  display: flex;
+  flex-direction: column;
+  list-style: none;
 }
 
-
 .menu-item {
-    padding: 10px 0;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  }
-  
-  .menu-item .icon {
-    margin-right: 10px;
-  }
-  
-  .menu-item .label {
-    font-weight: 500;
-    color: #333;
-    text-decoration: none;
-  }
-  
-  .menu-item:hover {
-    background-color: #e9ecef;
-    border-radius: 5px;
-  }
-  
-  .menu-item.selected {
-    background-color: #d1e7dd;
-    border-radius: 5px;
-  }
+  padding: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+}
 
-
+.menu-item:hover {
+background-color: #e9ecef;
+border-radius: 5px;
+}
 
 .main-content {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
