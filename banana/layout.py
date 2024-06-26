@@ -2,24 +2,14 @@ from dash import dcc, html
 from dash_ag_grid import AgGrid
 
 
-layout = [
-    dcc.Location(id="banana--location"),
-    html.Div(
-        html.Img(alt="Your logo here", className="logo"),
-        className="navbar",
-    ),
-    html.Div(
-        [
-            html.Div(
-                html.Ul(
-                    id="banana--menu",
-                    className="menu",
-                ),
-                className="drawer",
-            ),
+layout = html.Div(
+    [
+        dcc.Location(id="banana--location"),
+        html.Div(id="banana--menu", className="left-section"),
+        html.Div(
             html.Div(
                 [
-                    html.Div(id="metadata-placeholder"),
+                    html.H1(id="banana--table-title", className="table-title"),
                     AgGrid(
                         id="banana--table",
                         defaultColDef={
@@ -30,9 +20,10 @@ layout = [
                         dashGridOptions={"pagination": True},
                     ),
                 ],
-                className="main-content",
+                className="content",
             ),
-        ],
-        className="container",
-    ),
-]
+            className="right-section",
+        ),
+    ],
+    className="container",
+)

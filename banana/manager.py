@@ -1,4 +1,4 @@
-from dash import Dash, Input, Output, State, html
+from dash import Dash, Input, Output, State, html, ALL, ctx
 from pydantic import BaseModel, field_validator
 from sqlalchemy import MetaData, Table, create_engine, select, update
 
@@ -36,7 +36,12 @@ class Banana(BaseModel):
             tables = BananaTables(**data)
 
             return [
-                html.A(table.pretty_name, href=f"/{table.name}", className="menu-item")
+                html.A(
+                    table.pretty_name,
+                    href=f"/{table.name}",
+                    className="menu-item",
+                    id={"type": "menu-item", "id": table.name},
+                )
                 for table in tables.tables
             ]
 
@@ -44,6 +49,7 @@ class Banana(BaseModel):
             Output("banana--table", "columnDefs"),
             Output("banana--table", "rowData"),
             Output("banana--table", "getRowId"),
+            Output("banana--table-title", "children"),
             Input("banana--location", "pathname"),
             prevent_initial_call=True,
         )
@@ -93,7 +99,12 @@ class Banana(BaseModel):
             for row in rows:
                 row_data.append({col: value for col, value in zip(cols, row)})
 
-            return column_defs, row_data, f"params.data.{table_model.primary_key.name}"
+            return (
+                column_defs,
+                row_data,
+                f"params.data.{table_model.primary_key.name}",
+                table_model.pretty_name,
+            )
 
         @app.callback(
             Input("banana--table", "cellValueChanged"),
@@ -125,5 +136,19 @@ class Banana(BaseModel):
                 )
                 conn.execute(stmt)
                 conn.commit()
+
+        @app.callback(
+            Output({"type": "menu-item", "id": ALL}, "className"),
+            Input("banana--location", "pathname"),
+        )
+        def change_menu_item_style_on_selected(table_name):
+            return [
+                (
+                    "menu-item selected"
+                    if item["id"]["id"] == table_name[1:]
+                    else "menu-item"
+                )
+                for item in ctx.outputs_list
+            ]
 
         app.run(port=self.config.port, debug=self.config.debug)
