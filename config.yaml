@@ -1,3 +1,0 @@
-connection_string: "sqlite:///./data/test.db"
-debug: True
-port: 8050
