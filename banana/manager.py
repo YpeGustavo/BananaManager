@@ -39,7 +39,7 @@ class Banana(BaseModel):
 
             return [
                 html.A(
-                    table.pretty_name,
+                    table.display_name,
                     href=f"/{table.name}",
                     className="menu-item",
                     id={"type": "menu-item", "id": table.name},
@@ -80,7 +80,7 @@ class Banana(BaseModel):
             # Define header
             id_col = [
                 {
-                    "headerName": table_model.primary_key.pretty_name,
+                    "headerName": table_model.primary_key.display_name,
                     "valueGetter": {
                         "function": f"params.node.{table_model.primary_key.name}"
                     },
@@ -88,7 +88,7 @@ class Banana(BaseModel):
                 },
             ]
             values_cols = [
-                {"headerName": col.pretty_name, "field": col.name}
+                {"headerName": col.display_name, "field": col.name}
                 for col in table_model.columns
             ]
             column_defs = id_col + values_cols
@@ -105,7 +105,7 @@ class Banana(BaseModel):
                 column_defs,
                 row_data,
                 f"params.data.{table_model.primary_key.name}",
-                table_model.pretty_name,
+                table_model.display_name,
             )
 
         @app.callback(

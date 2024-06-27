@@ -23,37 +23,37 @@ class Config(BaseModel):
 
 class BananaPrimaryKey(BaseModel):
     name: str
-    pretty_name: Optional[str] = None
+    display_name: Optional[str] = None
 
     @model_validator(mode="after")
     def validate_model(self) -> Self:
-        if self.pretty_name is None:
-            self.pretty_name = self.name
+        if self.display_name is None:
+            self.display_name = self.name
         return self
 
 
 class BananaColumn(BaseModel):
     name: str
-    pretty_name: Optional[str] = None
+    display_name: Optional[str] = None
     datatype: Optional[str] = None
 
     @model_validator(mode="after")
     def validate_model(self) -> Self:
-        if self.pretty_name is None:
-            self.pretty_name = self.name
+        if self.display_name is None:
+            self.display_name = self.name
         return self
 
 
 class BananaTable(BaseModel):
     name: str
     primary_key: BananaPrimaryKey
-    pretty_name: Optional[str] = None
+    display_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
 
     @model_validator(mode="after")
     def validate_model(self) -> Self:
-        if self.pretty_name is None:
-            self.pretty_name = self.name
+        if self.display_name is None:
+            self.display_name = self.name
         return self
 
 
