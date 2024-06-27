@@ -162,4 +162,7 @@ cython_debug/
 #.idea/
 
 
+# Ignore dev tools
 data
+*.yaml
+*.bat
