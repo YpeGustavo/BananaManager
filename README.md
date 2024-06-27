@@ -2,20 +2,20 @@
 
 Welcome to **Banana Manager**! Banana Manager is a Python package designed to connect to a database and create a simple web app that displays and allows updates to selected tables. This tool is perfect for non-technical end-users who need to interact with database tables without using complex DBA tools.
 
-## Features
 
-- Connects to various databases
-- Displays selected tables in a web interface
-- Allows users to read and update table data
-- User-friendly and intuitive design
-- Secure and efficient database operations
+## Powered by
+
+- **[Dash](https://dash.plotly.com/) and [AG Grid](https://www.ag-grid.com/)**: User-friendly, intuitive, and interactive web interface with powerful table displays and editing capabilities.
+- **[Pydantic](https://pydantic-docs.helpmanual.io/) and [YAML](https://yaml.org/)**: Fast and accurate data handling and configuration.
+- **[SQLAlchemy](https://www.sqlalchemy.org/)**: Secure, efficient, and flexible database operations for multiple database backends.
+
 
 ## Installation
 
 To install Banana Manager, simply use pip:
 
 ```bash
-NOT AVAILABLE YET... SORRY =(
+pip install banana-manager
 ```
 
 ## License
