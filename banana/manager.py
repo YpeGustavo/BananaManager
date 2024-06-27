@@ -1,3 +1,5 @@
+from importlib import resources
+
 from dash import Dash, Input, Output, State, html, ALL, ctx
 from pydantic import BaseModel, field_validator
 from sqlalchemy import MetaData, Table, create_engine, select, update
@@ -22,7 +24,7 @@ class Banana(BaseModel):
         return config
 
     def run(self):
-        app = Dash(assets_folder=r"banana\assets")
+        app = Dash(assets_folder=resources.files("banana") / "assets")
         app.layout = layout
 
         metadata = MetaData()
