@@ -6,6 +6,7 @@ from sqlalchemy import MetaData, Table, create_engine, select, update
 
 from .layout import layout
 from .models import Config, read_yaml, BananaTables
+from .utils import get_table_model
 
 
 def DefaultConfig() -> Config:
@@ -117,11 +118,9 @@ class Banana(BaseModel):
             assert len(data) == 1, data
             data = data[0]
 
-            # Find the table model
-            tables_data = read_yaml(self.config.tables_file)
-            tables = BananaTables(**tables_data)
+            # Get model of selected table
             table_name = table_name[1:]
-            table_model = tables[table_name]
+            table_model = get_table_model(table_name, self.config)
 
             # Update the database
             engine = create_engine(self.config.connection_string)
