@@ -18,6 +18,19 @@ To install Banana Manager, simply use pip:
 pip install banana-manager
 ```
 
+## Roadmap
+
+| Version  | Description                 | Release date       |
+|----------|-----------------------------|--------------------|
+| **v0.1** | Load table and update cells | 2024-07-04         |
+| **v0.2** | Add and delete rows         | End of July 2024   |
+| **v0.3** | User authentication         | End of August 2024 |
+| **v0.4** | Logging                     | 2024               |
+| **v0.5** | Table groups                | 2024               |
+| **v0.6** | Advanced user authorization | 2025               |
+| **v0.7** | Special data types          | 2025               |
+| **v0.8** | Themes                      | 2025               |
+
 ## License
 
 Banana Manager is released under the MIT License. See the [LICENSE](LICENSE) file for more details.
