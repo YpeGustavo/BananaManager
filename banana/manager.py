@@ -2,11 +2,12 @@ from importlib import resources
 
 from dash import Dash, Input, Output, State, html, ALL, ctx
 from pydantic import BaseModel, field_validator
-from sqlalchemy import MetaData, Table, create_engine, select, update
+from sqlalchemy import MetaData
 
+from .callbacks.load_table import LoadTableCallback
+from .callbacks.update_cell import UpdateCellCallback
 from .layout import layout
 from .models import Config, read_yaml, BananaTables
-from .utils import get_table_model
 
 
 def DefaultConfig() -> Config:
@@ -56,87 +57,17 @@ class Banana(BaseModel):
             Input("banana--location", "pathname"),
             prevent_initial_call=True,
         )
-        def load_table(table_name: str):
-            # Get table model
-            data = read_yaml(self.config.tables_file)
-            tables = BananaTables(**data)
-            table_name = table_name[1:]
-            table_model = tables[table_name]
-
-            # Get table schema
-            engine = create_engine(self.config.connection_string)
-            table_data = Table(table_name, metadata, autoload_with=engine)
-
-            # Create select statement
-            stmt = select(
-                getattr(table_data.c, table_model.primary_key.name),
-                *[getattr(table_data.c, col.name) for col in table_model.columns],
-            ).select_from(table_data)
-
-            # Fetch results
-            with engine.connect() as conn:
-                result = conn.execute(stmt)
-                rows = result.fetchall()
-
-            # Define header
-            id_col = [
-                {
-                    "headerName": table_model.primary_key.display_name,
-                    "valueGetter": {
-                        "function": f"params.node.{table_model.primary_key.name}"
-                    },
-                    "editable": False,
-                },
-            ]
-            values_cols = [
-                {"headerName": col.display_name, "field": col.name}
-                for col in table_model.columns
-            ]
-            column_defs = id_col + values_cols
-
-            # Define Rows
-            cols = [table_model.primary_key.name] + [
-                col.name for col in table_model.columns
-            ]
-            row_data = []
-            for row in rows:
-                row_data.append({col: value for col, value in zip(cols, row)})
-
-            return (
-                column_defs,
-                row_data,
-                f"params.data.{table_model.primary_key.name}",
-                table_model.display_name,
-            )
+        def load_table(pathname: str):
+            obj = LoadTableCallback(pathname, self.config, metadata)
+            return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
 
         @app.callback(
             Input("banana--table", "cellValueChanged"),
             State("banana--location", "pathname"),
         )
-        def update_cell(data, table_name):
-            # Validate data
-            assert len(data) == 1, data
-            data = data[0]
-
-            # Get model of selected table
-            table_name = table_name[1:]
-            table_model = get_table_model(table_name, self.config)
-
-            # Update the database
-            engine = create_engine(self.config.connection_string)
-            table_data = Table(table_name, metadata, autoload_with=engine)
-
-            with engine.connect() as conn:
-                stmt = (
-                    update(table_data)
-                    .where(
-                        getattr(table_data.c, table_model.primary_key.name)
-                        == data["rowId"]
-                    )
-                    .values({data["colId"]: data["value"]})
-                )
-                conn.execute(stmt)
-                conn.commit()
+        def update_cell(data, pathname):
+            obj = UpdateCellCallback(data, pathname, self.config, metadata)
+            obj.exec()
 
         @app.callback(
             Output({"type": "menu-item", "id": ALL}, "className"),
