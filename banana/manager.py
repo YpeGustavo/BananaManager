@@ -2,12 +2,13 @@ from importlib import resources
 
 from dash import Dash, Input, Output, State, html, ALL, ctx
 from pydantic import BaseModel, field_validator
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, Table, create_engine, select, func
 
 from .callbacks.load_table import LoadTableCallback
 from .callbacks.update_cell import UpdateCellCallback
 from .layout import layout
-from .models import Config, read_yaml, BananaTables
+from .models import BananaTables, Config
+from .utils import read_sql, read_yaml
 
 
 def DefaultConfig() -> Config:
@@ -30,6 +31,7 @@ class Banana(BaseModel):
         app.layout = layout
 
         metadata = MetaData()
+        self.__check_foreign_key_uniqueness(metadata)
 
         @app.callback(
             Output("banana--menu", "children"),
@@ -84,3 +86,46 @@ class Banana(BaseModel):
             ]
 
         app.run(port=self.config.port, debug=self.config.debug)
+
+    def __check_foreign_key_uniqueness(
+        self,
+        metadata: MetaData,
+    ) -> bool:
+
+        data = read_yaml(self.config.tables_file)
+        tables = BananaTables(**data)
+        engine = create_engine(self.config.connection_string)
+
+        for table in tables.tables:
+            for column in table.columns:
+                if column.foreign_key is not None:
+                    foreign_table = Table(
+                        column.foreign_key.table_name,
+                        metadata,
+                        autoload_with=engine,
+                    )
+
+                    stmt = select(
+                        (
+                            func.count("*")
+                            == func.count(
+                                func.distinct(
+                                    foreign_table.c[column.foreign_key.column_name]
+                                )
+                            )
+                        )
+                        & (
+                            func.count("*")
+                            == func.count(
+                                func.distinct(
+                                    foreign_table.c[column.foreign_key.column_display]
+                                )
+                            )
+                        )
+                    )
+
+                    rows = read_sql(stmt, engine)
+                    if not rows[0][0]:
+                        raise Exception(
+                            f"Foreign key in the table `{table.name}` values is not unique."
+                        )
