@@ -21,6 +21,18 @@ class Config(BaseModel):
     tables_file: str = "tables.yaml"
 
 
+class BananaForeignKey(BaseModel):
+    table_name: str
+    column_name: str
+    column_display: Optional[str] = None
+
+    @model_validator(mode="after")
+    def validate_model(self) -> Self:
+        if self.column_display is None:
+            self.column_display = self.column_name
+        return self
+
+
 class BananaPrimaryKey(BaseModel):
     name: str
     display_name: Optional[str] = None
@@ -35,7 +47,7 @@ class BananaPrimaryKey(BaseModel):
 class BananaColumn(BaseModel):
     name: str
     display_name: Optional[str] = None
-    datatype: Optional[str] = None
+    foreign_key: Optional[BananaForeignKey] = None
 
     @model_validator(mode="after")
     def validate_model(self) -> Self:
