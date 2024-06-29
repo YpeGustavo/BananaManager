@@ -1,7 +1,7 @@
 from sqlalchemy import MetaData, Table, create_engine, select
 
 from ..models import Config, BananaColumn
-from ..utils import get_table_model
+from ..utils import get_table_model, read_sql
 
 
 class LoadTableCallback:
@@ -26,13 +26,9 @@ class LoadTableCallback:
                 autoload_with=self.engine,
             )
 
-            stmt = select(
-                foreign_table.c[column.foreign_key.column_display],
-            ).select_from(foreign_table)
-
-            with self.engine.connect() as conn:
-                result = conn.execute(stmt)
-                rows = result.fetchall()
+            stmt = select(foreign_table.c[column.foreign_key.column_display])
+            stmt = stmt.select_from(foreign_table)
+            rows = read_sql(stmt, self.engine)
 
             return {
                 "headerName": column.display_name,
@@ -55,17 +51,16 @@ class LoadTableCallback:
         ]
 
         values_cols = [self.get_columns_def(col) for col in self.banana_table.columns]
-
         return id_col + values_cols
 
     @property
     def row_data(self):
         table = Table(self.pathname[1:], self.metadata, autoload_with=self.engine)
 
-        stmt_columns = [getattr(table.c, self.banana_table.primary_key.name)]
+        stmt_columns = [table.c[self.banana_table.primary_key.name]]
         for col in self.banana_table.columns:
             if col.foreign_key is None:
-                stmt_columns.append(getattr(table.c, col.name))
+                stmt_columns.append(table.c[col.name])
             else:
                 foreign_table = Table(
                     col.foreign_key.table_name,
@@ -74,20 +69,13 @@ class LoadTableCallback:
                 )
                 table = table.outerjoin(
                     foreign_table,
-                    getattr(table.c, col.name)
-                    == (getattr(foreign_table.c, col.foreign_key.column_name)),
+                    table.c[col.name] == (foreign_table.c[col.foreign_key.column_name]),
                 )
-                stmt_columns.append(
-                    getattr(foreign_table.c, col.foreign_key.column_display)
-                )
+                stmt_columns.append(foreign_table.c[col.foreign_key.column_display])
 
         # Create select statement
         stmt = select(*stmt_columns).select_from(table)
-
-        # Fetch results
-        with self.engine.connect() as conn:
-            result = conn.execute(stmt)
-            rows = result.fetchall()
+        rows = read_sql(stmt, self.engine)
 
         # Define Rows
         cols = [self.banana_table.primary_key.name] + [

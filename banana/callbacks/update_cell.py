@@ -42,10 +42,8 @@ class UpdateCellCallback:
             )
 
             with self.engine.connect() as conn:
-                id_col = getattr(foreign_table.c, banana_column.foreign_key.column_name)
-                label = getattr(
-                    foreign_table.c, banana_column.foreign_key.column_display
-                )
+                id_col = foreign_table.c[banana_column.foreign_key.column_name]
+                label = foreign_table.c[banana_column.foreign_key.column_display]
 
                 stmt = (
                     select(id_col)
@@ -60,10 +58,7 @@ class UpdateCellCallback:
         with self.engine.connect() as conn:
             stmt = (
                 update(table_data)
-                .where(
-                    getattr(table_data.c, self.banana_table.primary_key.name)
-                    == self.row_id
-                )
+                .where(table_data.c[self.banana_table.primary_key.name] == self.row_id)
                 .values({self.col_id: self.new_value})
             )
             conn.execute(stmt)
