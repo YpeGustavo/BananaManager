@@ -18,7 +18,7 @@ def get_version() -> str:
 
 
 setup(
-    name="banana",
+    name="banana-manager",
     version=get_version(),
     author="Gustavo Furtado",
     author_email="gustavofurtado2@gmail.com",
