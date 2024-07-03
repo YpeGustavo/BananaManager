@@ -4,8 +4,7 @@ from dash import Dash, Input, Output, State, html, ALL, ctx
 from pydantic import BaseModel, field_validator
 from sqlalchemy import MetaData, Table, create_engine, select, func
 
-from .callbacks.load_table import LoadTableCallback
-from .callbacks.update_cell import UpdateCellCallback
+from .callbacks import LoadTableCallback, UpdateCellCallback
 from .layout import layout
 from .models import BananaTables, Config
 from .utils import read_sql, read_yaml
