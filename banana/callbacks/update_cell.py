@@ -27,6 +27,7 @@ class UpdateCellCallback:
         table_data = Table(
             self.banana_table.name,
             self.metadata,
+            schema=self.banana_table.schema_name,
             autoload_with=self.engine,
         )
 
@@ -38,6 +39,7 @@ class UpdateCellCallback:
             foreign_table = Table(
                 banana_column.foreign_key.table_name,
                 self.metadata,
+                schema=banana_column.foreign_key.schema_name,
                 autoload_with=self.engine,
             )
 

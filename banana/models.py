@@ -25,6 +25,7 @@ class BananaForeignKey(BaseModel):
     table_name: str
     column_name: str
     column_display: Optional[str] = None
+    schema_name: Optional[str] = None
 
     @model_validator(mode="after")
     def validate_model(self) -> Self:
@@ -60,6 +61,7 @@ class BananaTable(BaseModel):
     name: str
     primary_key: BananaPrimaryKey
     display_name: Optional[str] = None
+    schema_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
 
     @model_validator(mode="after")

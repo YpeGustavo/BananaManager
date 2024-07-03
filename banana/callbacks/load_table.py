@@ -23,6 +23,7 @@ class LoadTableCallback:
             foreign_table = Table(
                 column.foreign_key.table_name,
                 self.metadata,
+                schema=column.foreign_key.schema_name,
                 autoload_with=self.engine,
             )
 
@@ -55,7 +56,12 @@ class LoadTableCallback:
 
     @property
     def row_data(self):
-        table = Table(self.pathname[1:], self.metadata, autoload_with=self.engine)
+        table = Table(
+            self.banana_table.name,
+            self.metadata,
+            schema=self.banana_table.schema_name,
+            autoload_with=self.engine,
+        )
 
         stmt_columns = [table.c[self.banana_table.primary_key.name]]
         for col in self.banana_table.columns:
@@ -65,6 +71,7 @@ class LoadTableCallback:
                 foreign_table = Table(
                     col.foreign_key.table_name,
                     self.metadata,
+                    schema=col.foreign_key.schema_name,
                     autoload_with=self.engine,
                 )
                 table = table.outerjoin(

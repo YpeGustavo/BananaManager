@@ -102,6 +102,7 @@ class Banana(BaseModel):
                     foreign_table = Table(
                         column.foreign_key.table_name,
                         metadata,
+                        schema=column.foreign_key.schema_name,
                         autoload_with=engine,
                     )
 
