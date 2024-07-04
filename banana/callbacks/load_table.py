@@ -64,9 +64,14 @@ class LoadTableCallback:
         )
 
         stmt_columns = [table.c[self.banana_table.primary_key.name]]
+        joined_table = table
+
         for col in self.banana_table.columns:
             if col.foreign_key is None:
-                stmt_columns.append(table.c[col.name])
+                try:
+                    stmt_columns.append(table.c[col.name])
+                except KeyError as e:
+                    raise f"Column {col.name} not found in the table {table.name}"
             else:
                 foreign_table = Table(
                     col.foreign_key.table_name,
@@ -74,14 +79,15 @@ class LoadTableCallback:
                     schema=col.foreign_key.schema_name,
                     autoload_with=self.engine,
                 )
-                table = table.outerjoin(
+                joined_table = joined_table.outerjoin(
                     foreign_table,
-                    table.c[col.name] == (foreign_table.c[col.foreign_key.column_name]),
+                    joined_table.c[col.name]
+                    == foreign_table.c[col.foreign_key.column_name],
                 )
                 stmt_columns.append(foreign_table.c[col.foreign_key.column_display])
 
         # Create select statement
-        stmt = select(*stmt_columns).select_from(table)
+        stmt = select(*stmt_columns).select_from(joined_table)
         rows = read_sql(stmt, self.engine)
 
         # Define Rows
