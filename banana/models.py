@@ -16,7 +16,6 @@ def read_yaml(file) -> dict:
 
 class Config(BaseModel):
     connection_string: str
-    debug: bool = False
     port: PositiveInt = 4000
     tables_file: str = "tables.yaml"
 

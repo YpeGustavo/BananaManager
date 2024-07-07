@@ -83,7 +83,7 @@ class Banana(BaseModel):
                 for item in ctx.outputs_list
             ]
 
-        app.run(port=self.config.port, debug=self.config.debug)
+        app.run(port=self.config.port)
 
     def __check_foreign_key_uniqueness(self) -> bool:
         metadata = MetaData()
