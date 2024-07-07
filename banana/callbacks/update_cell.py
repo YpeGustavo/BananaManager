@@ -10,7 +10,6 @@ class UpdateCellCallback:
         data: list[dict[str, str]],
         pathname: str,
         config: Config,
-        metadata: MetaData,
     ):
         # Validate data
         assert len(data) == 1, data
@@ -19,7 +18,7 @@ class UpdateCellCallback:
         self.row_id = data[0]["rowId"]
         self.new_value = data[0]["value"]
 
-        self.metadata = metadata
+        self.metadata = MetaData()
         self.engine = create_engine(config.connection_string)
         self.banana_table = get_table_model(pathname[1:], config)
 

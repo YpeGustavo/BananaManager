@@ -29,8 +29,7 @@ class Banana(BaseModel):
         app = Dash(assets_folder=resources.files("banana") / "assets")
         app.layout = layout
 
-        metadata = MetaData()
-        self.__check_foreign_key_uniqueness(metadata)
+        self.__check_foreign_key_uniqueness()
 
         @app.callback(
             Output("banana--menu", "children"),
@@ -59,7 +58,7 @@ class Banana(BaseModel):
             prevent_initial_call=True,
         )
         def load_table(pathname: str):
-            obj = LoadTableCallback(pathname, self.config, metadata)
+            obj = LoadTableCallback(pathname, self.config)
             return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
 
         @app.callback(
@@ -67,7 +66,7 @@ class Banana(BaseModel):
             State("banana--location", "pathname"),
         )
         def update_cell(data, pathname):
-            obj = UpdateCellCallback(data, pathname, self.config, metadata)
+            obj = UpdateCellCallback(data, pathname, self.config)
             obj.exec()
 
         @app.callback(
@@ -86,11 +85,8 @@ class Banana(BaseModel):
 
         app.run(port=self.config.port, debug=self.config.debug)
 
-    def __check_foreign_key_uniqueness(
-        self,
-        metadata: MetaData,
-    ) -> bool:
-
+    def __check_foreign_key_uniqueness(self) -> bool:
+        metadata = MetaData()
         data = read_yaml(self.config.tables_file)
         tables = BananaTables(**data)
         engine = create_engine(self.config.connection_string)

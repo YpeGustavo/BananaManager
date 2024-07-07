@@ -1,18 +1,97 @@
-from sqlalchemy import MetaData, Table, create_engine, select
+from sqlalchemy import (
+    Column,
+    Engine,
+    ForeignKey,
+    MetaData,
+    String,
+    Table,
+    create_engine,
+    select,
+)
 
-from ..models import Config, BananaColumn
+from ..models import Config, BananaColumn, BananaTable
 from ..utils import get_table_model, read_sql
 
 
-class LoadTableCallback:
-    def __init__(self, pathname: str, config: Config, metadata: MetaData):
-        self.pathname = pathname
-        self.config = config
-        self.metadata = metadata
-        self.engine = create_engine(self.config.connection_string)
-        self.banana_table = get_table_model(self.pathname[1:], self.config)
+class SqlAlchemyStatement:
+    def __init__(self, banana_table: BananaTable, engine: Engine):
+        self.banana_table = banana_table
+        self.engine = engine
+        self.metadata = MetaData()
 
-    def get_columns_def(self, column: BananaColumn) -> dict[str, str]:
+        self.table = self.define_table()
+        self.stmt = self.construct_stmt()
+
+    def construct_stmt(self):
+        table_alias = self.table.alias()
+        columns_stmt = [
+            table_alias.c[self.banana_table.primary_key.name].label(
+                self.banana_table.primary_key.display_name
+            )
+        ]
+
+        joins_stmt = []
+
+        for column in self.banana_table.columns:
+            if column.foreign_key is None:
+                columns_stmt.append(
+                    table_alias.c[column.name].label(column.display_name)
+                )
+            else:
+                fk_table = Table(
+                    column.foreign_key.table_name,
+                    self.metadata,
+                    autoload_with=self.engine,
+                    schema=column.foreign_key.schema_name,
+                )
+                fk_table_alias = fk_table.alias()
+                columns_stmt.append(
+                    fk_table_alias.c[column.foreign_key.column_display].label(
+                        column.display_name
+                    )
+                )
+                joins_stmt.append(
+                    (
+                        fk_table_alias,
+                        table_alias.c[column.name]
+                        == fk_table_alias.c[column.foreign_key.column_name],
+                    )
+                )
+
+        query = select(*columns_stmt).select_from(table_alias)
+        for fk_table_alias, join_condition in joins_stmt:
+            query = query.outerjoin(fk_table_alias, join_condition)
+
+        return query
+
+    def define_table(self):
+        columns = [Column(self.banana_table.primary_key.name, String, primary_key=True)]
+
+        for column in self.banana_table.columns:
+            if column.foreign_key:
+                fk = ForeignKey(
+                    f"{column.foreign_key.table_name}.{column.foreign_key.column_name}"
+                )
+                columns.append(Column(column.name, String, fk))
+            else:
+                columns.append(Column(column.name, String))
+
+        table = Table(
+            self.banana_table.name,
+            self.metadata,
+            *columns,
+            schema=self.banana_table.schema_name,
+        )
+
+        return table
+
+
+class LoadTableCallback:
+    def __init__(self, pathname: str, config: Config):
+        self.engine = create_engine(config.connection_string)
+        self.banana_table = get_table_model(pathname[1:], config)
+
+    def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:
             return {
                 "headerName": column.display_name,
@@ -20,9 +99,10 @@ class LoadTableCallback:
             }
 
         else:
+            metadata = MetaData()
             foreign_table = Table(
                 column.foreign_key.table_name,
-                self.metadata,
+                metadata,
                 schema=column.foreign_key.schema_name,
                 autoload_with=self.engine,
             )
@@ -51,44 +131,13 @@ class LoadTableCallback:
             },
         ]
 
-        values_cols = [self.get_columns_def(col) for col in self.banana_table.columns]
+        values_cols = [self.__get_columns_def(col) for col in self.banana_table.columns]
         return id_col + values_cols
 
     @property
     def row_data(self):
-        table = Table(
-            self.banana_table.name,
-            self.metadata,
-            schema=self.banana_table.schema_name,
-            autoload_with=self.engine,
-        )
-
-        stmt_columns = [table.c[self.banana_table.primary_key.name]]
-        joined_table = table
-
-        for col in self.banana_table.columns:
-            if col.foreign_key is None:
-                try:
-                    stmt_columns.append(table.c[col.name])
-                except KeyError as e:
-                    raise f"Column {col.name} not found in the table {table.name}"
-            else:
-                foreign_table = Table(
-                    col.foreign_key.table_name,
-                    self.metadata,
-                    schema=col.foreign_key.schema_name,
-                    autoload_with=self.engine,
-                )
-                joined_table = joined_table.outerjoin(
-                    foreign_table,
-                    joined_table.c[col.name]
-                    == foreign_table.c[col.foreign_key.column_name],
-                )
-                stmt_columns.append(foreign_table.c[col.foreign_key.column_display])
-
-        # Create select statement
-        stmt = select(*stmt_columns).select_from(joined_table)
-        rows = read_sql(stmt, self.engine)
+        sqlalchemy_table = SqlAlchemyStatement(self.banana_table, self.engine)
+        rows = read_sql(sqlalchemy_table.stmt, self.engine)
 
         # Define Rows
         cols = [self.banana_table.primary_key.name] + [
