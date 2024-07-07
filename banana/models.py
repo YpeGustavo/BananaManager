@@ -18,6 +18,7 @@ class Config(BaseModel):
     connection_string: str
     port: PositiveInt = 4000
     tables_file: str = "tables.yaml"
+    title: str = "Banana Database Manager"
 
 
 class BananaForeignKey(BaseModel):

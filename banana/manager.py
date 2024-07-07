@@ -26,7 +26,10 @@ class Banana(BaseModel):
         return config
 
     def run(self):
-        app = Dash(assets_folder=resources.files("banana") / "assets")
+        app = Dash(
+            assets_folder=resources.files("banana") / "assets",
+            title=self.config.title,
+        )
         app.layout = layout
 
         self.__check_foreign_key_uniqueness()
