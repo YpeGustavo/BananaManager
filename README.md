@@ -20,16 +20,18 @@ pip install banana-manager
 
 ## Roadmap
 
-| Version  | Description                 | Release date       |
-|----------|-----------------------------|--------------------|
-| **v0.1** | Load table and update cells | 2024-07-04         |
-| **v0.2** | Add and delete rows         | End of July 2024   |
-| **v0.3** | User authentication         | End of August 2024 |
-| **v0.4** | Logging                     | 2024               |
-| **v0.5** | Table groups                | 2024               |
-| **v0.6** | Advanced user authorization | 2025               |
-| **v0.7** | Special data types          | 2025               |
-| **v0.8** | Themes                      | 2025               |
+| Version  | Description                 | Release date              |
+|----------|-----------------------------|---------------------------|
+| **v0.1** | Load table and update cells | 2024-07-04                |
+| *v0.1.x* | Bug fixes                   | Throughout July 2024      |
+| **v0.2** | User authentication         | 2nd week of August 2024   |
+| **v0.3** | Add and delete rows         | 3rd week of August 2024   |
+| *v0.3.x* | Bug fixes                   | Throughout September 2024 |
+| **v0.4** | Logging                     | Q4 2024                   |
+| **v0.5** | Table groups                | Q4 2024                   |
+| **v0.6** | Advanced user authorization | Q1 2025                   |
+| **v0.7** | Special data types          | Q2 2025                   |
+| **v0.8** | Themes                      | 2025                      |
 
 ## License
 
