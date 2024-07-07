@@ -1,4 +1,4 @@
-from typing import Optional, Self
+from typing import Optional
 
 from pydantic import BaseModel, model_validator, PositiveInt
 import yaml
@@ -28,7 +28,7 @@ class BananaForeignKey(BaseModel):
     schema_name: Optional[str] = None
 
     @model_validator(mode="after")
-    def validate_model(self) -> Self:
+    def validate_model(self):
         if self.column_display is None:
             self.column_display = self.column_name
         return self
@@ -39,7 +39,7 @@ class BananaPrimaryKey(BaseModel):
     display_name: Optional[str] = None
 
     @model_validator(mode="after")
-    def validate_model(self) -> Self:
+    def validate_model(self):
         if self.display_name is None:
             self.display_name = self.name
         return self
@@ -51,7 +51,7 @@ class BananaColumn(BaseModel):
     foreign_key: Optional[BananaForeignKey] = None
 
     @model_validator(mode="after")
-    def validate_model(self) -> Self:
+    def validate_model(self):
         if self.display_name is None:
             self.display_name = self.name
         return self
@@ -65,7 +65,7 @@ class BananaTable(BaseModel):
     columns: Optional[list[BananaColumn]] = None
 
     @model_validator(mode="after")
-    def validate_model(self) -> Self:
+    def validate_model(self):
         if self.display_name is None:
             self.display_name = self.name
         return self
