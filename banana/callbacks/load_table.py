@@ -124,9 +124,7 @@ class LoadTableCallback:
         id_col = [
             {
                 "headerName": self.banana_table.primary_key.display_name,
-                "valueGetter": {
-                    "function": f"params.node.{self.banana_table.primary_key.name}"
-                },
+                "field": self.banana_table.primary_key.name,
                 "editable": False,
             },
         ]
