@@ -1,7 +1,6 @@
 from importlib import resources
 
 from dash import Dash, Input, Output, State, html, ALL, ctx
-from pydantic import BaseModel, field_validator
 from sqlalchemy import MetaData, Table, create_engine, select, func
 
 from .callbacks import LoadTableCallback, UpdateCellCallback
@@ -10,36 +9,26 @@ from .models import BananaTables, Config
 from .utils import read_sql, read_yaml
 
 
-def DefaultConfig() -> Config:
-    data = read_yaml("config.yaml")
-    return Config(**data)
+class Banana(Dash):
+    def __init__(self):
+        # Read config file
+        data = read_yaml("config.yaml")
+        config = Config(**data)
+        self.__check_foreign_key_uniqueness(config)
 
-
-class Banana(BaseModel):
-    config: Config = DefaultConfig()
-
-    @field_validator("config", mode="before")
-    @classmethod
-    def load_config(cls, config):
-        if not isinstance(config, Config):
-            config = read_yaml(config)
-        return config
-
-    def run(self):
-        app = Dash(
+        # Create app
+        super().__init__(
             assets_folder=resources.files("banana") / "assets",
-            title=self.config.title,
+            title=config.title,
         )
-        app.layout = layout
+        self.layout = layout
 
-        self.__check_foreign_key_uniqueness()
-
-        @app.callback(
+        @self.callback(
             Output("banana--menu", "children"),
             Input("banana--menu", "style"),
         )
         def load_menu(_):
-            data = read_yaml(self.config.tables_file)
+            data = read_yaml(config.tables_file)
             tables = BananaTables(**data)
 
             return [
@@ -52,7 +41,7 @@ class Banana(BaseModel):
                 for table in tables.tables
             ]
 
-        @app.callback(
+        @self.callback(
             Output("banana--table", "columnDefs"),
             Output("banana--table", "rowData"),
             Output("banana--table", "getRowId"),
@@ -61,18 +50,18 @@ class Banana(BaseModel):
             prevent_initial_call=True,
         )
         def load_table(pathname: str):
-            obj = LoadTableCallback(pathname, self.config)
+            obj = LoadTableCallback(pathname, config)
             return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
 
-        @app.callback(
+        @self.callback(
             Input("banana--table", "cellValueChanged"),
             State("banana--location", "pathname"),
         )
         def update_cell(data, pathname):
-            obj = UpdateCellCallback(data, pathname, self.config)
+            obj = UpdateCellCallback(data, pathname, config)
             obj.exec()
 
-        @app.callback(
+        @self.callback(
             Output({"type": "menu-item", "id": ALL}, "className"),
             Input("banana--location", "pathname"),
         )
@@ -86,13 +75,11 @@ class Banana(BaseModel):
                 for item in ctx.outputs_list
             ]
 
-        app.run(port=self.config.port)
-
-    def __check_foreign_key_uniqueness(self) -> bool:
+    def __check_foreign_key_uniqueness(self, config: Config) -> bool:
         metadata = MetaData()
-        data = read_yaml(self.config.tables_file)
+        data = read_yaml(config.tables_file)
         tables = BananaTables(**data)
-        engine = create_engine(self.config.connection_string)
+        engine = create_engine(config.connection_string)
 
         for table in tables.tables:
             for column in table.columns:
