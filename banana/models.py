@@ -3,6 +3,12 @@ from typing import Optional
 from pydantic import BaseModel, model_validator, PositiveInt
 import yaml
 
+from .errors import (
+    MultipleBananaTablesWithSameName,
+    NoBananaTableFound,
+    NoBananaTableSelected,
+)
+
 
 def read_yaml(file) -> dict:
     try:
@@ -76,5 +82,12 @@ class BananaTables(BaseModel):
 
     def __getitem__(self, table_name: str) -> BananaTable:
         tbs = [table for table in self.tables if table.name == table_name]
-        assert len(tbs) == 1, "Check the name of the table"
+
+        if not table_name:
+            raise NoBananaTableSelected()
+        if len(tbs) == 0:
+            raise NoBananaTableFound(table_name)
+        elif len(tbs) > 1:
+            raise MultipleBananaTablesWithSameName(table_name)
+
         return tbs[0]
