@@ -35,7 +35,32 @@ body {
   box-sizing: border-box;
   margin: 10px;
   border-radius: 20px;
+  max-height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: var(--color-info) transparent; /* Firefox */
 }
+
+/* Firefox hover */
+.left-section:hover {
+  scrollbar-color: var(--color-info) rgba(0, 0, 0, 0.1);
+}
+
+/* Webkit browsers (Chrome, Safari) */
+.left-section::-webkit-scrollbar {
+  width: 8px;
+}
+.left-section::-webkit-scrollbar-thumb {
+  background: var(--color-info);
+  border-radius: 4px;
+}
+.left-section::-webkit-scrollbar-thumb:hover {
+  background: var(--color-info);
+}
+.left-section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 
 .menu-item {
   padding: 15px;
