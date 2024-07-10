@@ -18,6 +18,7 @@ layout = html.Div(
                             "editable": True,
                         },
                         dashGridOptions={"pagination": True},
+                        style={"height": "calc(100vh - 85px)", "overflow": "auto"},
                     ),
                 ],
                 className="content",
