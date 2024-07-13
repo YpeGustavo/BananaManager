@@ -1,30 +1,13 @@
 from typing import Optional
 
-from pydantic import BaseModel, model_validator, PositiveInt
-import yaml
+from pydantic import BaseModel, model_validator
 
 from .errors import (
     MultipleBananaTablesWithSameName,
     NoBananaTableFound,
     NoBananaTableSelected,
 )
-
-
-def read_yaml(file) -> dict:
-    try:
-        with open(file, "r", encoding="utf8") as file:
-            return yaml.safe_load(file)
-    except FileNotFoundError:
-        raise Exception(f"Config file `{file}` not found.")
-    except yaml.YAMLError as exc:
-        raise Exception(f"Error parsing YAML config file: {exc}")
-
-
-class Config(BaseModel):
-    connection_string: str
-    port: PositiveInt = 4000
-    tables_file: str = "tables.yaml"
-    title: str = "Banana Database Manager"
+from .utils import read_yaml, config
 
 
 class BananaForeignKey(BaseModel):
@@ -91,3 +74,9 @@ class BananaTables(BaseModel):
             raise MultipleBananaTablesWithSameName(table_name)
 
         return tbs[0]
+
+
+def get_table_model(table_name: str) -> BananaTable:
+    data = read_yaml(config.tables_file)
+    tables = BananaTables(**data)
+    return tables[table_name]

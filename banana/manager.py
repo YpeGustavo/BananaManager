@@ -2,21 +2,19 @@ from importlib import resources
 
 from dash import Dash, Input, Output, State, html, ALL, ctx
 
-from .queries import check_foreign_key_uniqueness, LoadTableCallback, UpdateCellCallback
+from .queries import LoadTableCallback, UpdateCellCallback, check_foreign_key_uniqueness
 from .layout import layout
-from .models import BananaTables, Config
-from .utils import read_yaml
+from .models import BananaTables
+from .utils import read_yaml, config, server
 
 
 class Banana(Dash):
     def __init__(self):
-        # Read config file
-        data = read_yaml("config.yaml")
-        config = Config(**data)
-        check_foreign_key_uniqueness(config)
+        with server.app_context():
+            check_foreign_key_uniqueness()
 
-        # Create app
         super().__init__(
+            server=server,
             assets_folder=resources.files("banana") / "assets",
             title=config.title,
         )
@@ -49,7 +47,7 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def load_table(pathname: str):
-            obj = LoadTableCallback(pathname, config)
+            obj = LoadTableCallback(pathname)
             return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
 
         @self.callback(
@@ -57,7 +55,7 @@ class Banana(Dash):
             State("banana--location", "pathname"),
         )
         def update_cell(data, pathname):
-            obj = UpdateCellCallback(data, pathname, config)
+            obj = UpdateCellCallback(data, pathname)
             obj.exec()
 
         @self.callback(

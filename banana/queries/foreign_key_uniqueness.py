@@ -1,15 +1,14 @@
-from sqlalchemy import MetaData, Table, create_engine, select, func
+from sqlalchemy import MetaData, Table, select, func
 
 from ..errors import InvalidBananaForeignKey
-from ..models import BananaTables, Config
-from ..utils import read_sql, read_yaml
+from ..models import BananaTables
+from ..utils import read_sql, read_yaml, config, db
 
 
-def check_foreign_key_uniqueness(config: Config) -> bool:
+def check_foreign_key_uniqueness() -> bool:
     metadata = MetaData()
     data = read_yaml(config.tables_file)
     tables = BananaTables(**data)
-    engine = create_engine(config.connection_string)
 
     for table in tables.tables:
         for column in table.columns:
@@ -18,7 +17,7 @@ def check_foreign_key_uniqueness(config: Config) -> bool:
                     column.foreign_key.table_name,
                     metadata,
                     schema=column.foreign_key.schema_name,
-                    autoload_with=engine,
+                    autoload_with=db.engine,
                 )
 
                 stmt = select(
@@ -40,7 +39,7 @@ def check_foreign_key_uniqueness(config: Config) -> bool:
                     ),
                 )
 
-                rows = read_sql(stmt, engine)
+                rows = read_sql(stmt)
 
                 if not rows[0][0]:
                     raise InvalidBananaForeignKey(

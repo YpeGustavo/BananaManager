@@ -1,16 +1,11 @@
-from sqlalchemy import MetaData, Table, create_engine, select, update
+from sqlalchemy import MetaData, Table, select, update
 
-from ..models import Config
-from ..utils import get_table_model
+from ..models import get_table_model
+from ..utils import db
 
 
 class UpdateCellCallback:
-    def __init__(
-        self,
-        data: list[dict[str, str]],
-        pathname: str,
-        config: Config,
-    ):
+    def __init__(self, data: list[dict[str, str]], pathname: str):
         # Validate data
         assert len(data) == 1, data
 
@@ -19,15 +14,14 @@ class UpdateCellCallback:
         self.new_value = data[0]["value"]
 
         self.metadata = MetaData()
-        self.engine = create_engine(config.connection_string)
-        self.banana_table = get_table_model(pathname[1:], config)
+        self.banana_table = get_table_model(pathname[1:])
 
     def exec(self):
         table_data = Table(
             self.banana_table.name,
             self.metadata,
             schema=self.banana_table.schema_name,
-            autoload_with=self.engine,
+            autoload_with=db.engine,
         )
 
         banana_column = next(
@@ -39,10 +33,10 @@ class UpdateCellCallback:
                 banana_column.foreign_key.table_name,
                 self.metadata,
                 schema=banana_column.foreign_key.schema_name,
-                autoload_with=self.engine,
+                autoload_with=db.engine,
             )
 
-            with self.engine.connect() as conn:
+            with db.engine.connect() as conn:
                 id_col = foreign_table.c[banana_column.foreign_key.column_name]
                 label = foreign_table.c[banana_column.foreign_key.column_display]
 
@@ -56,7 +50,7 @@ class UpdateCellCallback:
                 rows = result.fetchall()
                 self.new_value = rows[0][0]
 
-        with self.engine.connect() as conn:
+        with db.engine.connect() as conn:
             stmt = (
                 update(table_data)
                 .where(table_data.c[self.banana_table.primary_key.name] == self.row_id)

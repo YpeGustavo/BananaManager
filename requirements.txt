@@ -1,5 +1,6 @@
 dash
 dash-ag-grid
+Flask-SQLAlchemy
 pydantic
 sqlalchemy
 pyyaml

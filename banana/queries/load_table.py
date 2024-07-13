@@ -1,22 +1,12 @@
-from sqlalchemy import (
-    Column,
-    Engine,
-    ForeignKey,
-    MetaData,
-    String,
-    Table,
-    create_engine,
-    select,
-)
+from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
-from ..models import Config, BananaColumn, BananaTable
-from ..utils import get_table_model, read_sql
+from ..models import BananaColumn, BananaTable, get_table_model
+from ..utils import read_sql, db
 
 
 class SqlAlchemyStatement:
-    def __init__(self, banana_table: BananaTable, engine: Engine):
+    def __init__(self, banana_table: BananaTable):
         self.banana_table = banana_table
-        self.engine = engine
         self.metadata = MetaData()
 
         self.table = self.define_table()
@@ -41,7 +31,7 @@ class SqlAlchemyStatement:
                 fk_table = Table(
                     column.foreign_key.table_name,
                     self.metadata,
-                    autoload_with=self.engine,
+                    autoload_with=db.engine,
                     schema=column.foreign_key.schema_name,
                 )
                 fk_table_alias = fk_table.alias()
@@ -87,9 +77,8 @@ class SqlAlchemyStatement:
 
 
 class LoadTableCallback:
-    def __init__(self, pathname: str, config: Config):
-        self.engine = create_engine(config.connection_string)
-        self.banana_table = get_table_model(pathname[1:], config)
+    def __init__(self, pathname: str):
+        self.banana_table = get_table_model(pathname[1:])
 
     def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:
@@ -104,12 +93,12 @@ class LoadTableCallback:
                 column.foreign_key.table_name,
                 metadata,
                 schema=column.foreign_key.schema_name,
-                autoload_with=self.engine,
+                autoload_with=db.engine,
             )
 
             stmt = select(foreign_table.c[column.foreign_key.column_display])
             stmt = stmt.select_from(foreign_table)
-            rows = read_sql(stmt, self.engine)
+            rows = read_sql(stmt)
 
             return {
                 "headerName": column.display_name,
@@ -134,8 +123,8 @@ class LoadTableCallback:
 
     @property
     def row_data(self):
-        sqlalchemy_table = SqlAlchemyStatement(self.banana_table, self.engine)
-        rows = read_sql(sqlalchemy_table.stmt, self.engine)
+        sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
+        rows = read_sql(sqlalchemy_table.stmt)
 
         # Define Rows
         cols = [self.banana_table.primary_key.name] + [
