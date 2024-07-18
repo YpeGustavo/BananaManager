@@ -165,5 +165,6 @@ cython_debug/
 # Ignore dev tools
 data
 *.yaml
+*.yml
 *.bat
 .vscode
