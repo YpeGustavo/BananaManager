@@ -2,7 +2,7 @@ from importlib import resources
 
 from dash import Dash, Input, Output, State, html, ALL, ctx
 
-from .queries import LoadTableCallback, UpdateCellCallback, check_foreign_key_uniqueness
+from .queries import InitApp, LoadMenuCallback, LoadTableCallback, UpdateCellCallback
 from .layout import layout
 from .models import BananaTables
 from .utils import read_yaml, config, server
@@ -11,7 +11,8 @@ from .utils import read_yaml, config, server
 class Banana(Dash):
     def __init__(self):
         with server.app_context():
-            check_foreign_key_uniqueness()
+            obj = InitApp()
+            obj.refresh()
 
         super().__init__(
             server=server,
@@ -22,21 +23,11 @@ class Banana(Dash):
 
         @self.callback(
             Output("banana--menu", "children"),
-            Input("banana--menu", "style"),
+            Input("banana--location", "pathname"),
         )
-        def load_menu(_):
-            data = read_yaml(config.tables_file)
-            tables = BananaTables(**data)
-
-            return [
-                html.A(
-                    table.display_name,
-                    href=f"/{table.name}",
-                    className="menu-item",
-                    id={"type": "menu-item", "id": table.name},
-                )
-                for table in tables.tables
-            ]
+        def load_menu(pathname: str):
+            obj = LoadMenuCallback(pathname)
+            return obj.menu
 
         @self.callback(
             Output("banana--table", "columnDefs"),
@@ -57,17 +48,3 @@ class Banana(Dash):
         def update_cell(data, pathname):
             obj = UpdateCellCallback(data, pathname)
             obj.exec()
-
-        @self.callback(
-            Output({"type": "menu-item", "id": ALL}, "className"),
-            Input("banana--location", "pathname"),
-        )
-        def change_menu_item_style_on_selected(table_name):
-            return [
-                (
-                    "menu-item selected"
-                    if item["id"]["id"] == table_name[1:]
-                    else "menu-item"
-                )
-                for item in ctx.outputs_list
-            ]

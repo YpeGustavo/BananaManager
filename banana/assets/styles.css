@@ -62,9 +62,21 @@ body {
 }
 
 
-.menu-item {
-  padding: 15px;
+.menu-group {
+  font-size: 10px;
+  padding: 5px;
   margin: 5px 0;
+  color: var(--color-info);
+}
+
+.menu-hr {
+  margin: 10px;
+  color: var(--color-info);
+}
+
+.menu-item {
+  font-size: 14px;
+  padding: 10px;
   border-radius: 10px;
   cursor: pointer;
   text-decoration: none;

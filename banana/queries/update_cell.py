@@ -14,7 +14,8 @@ class UpdateCellCallback:
         self.new_value = data[0]["value"]
 
         self.metadata = MetaData()
-        self.banana_table = get_table_model(pathname[1:])
+        _, group_name, table_name = pathname.split("/")
+        self.banana_table = get_table_model(table_name, group_name)
 
     def exec(self):
         table_data = Table(
@@ -40,21 +41,21 @@ class UpdateCellCallback:
                 id_col = foreign_table.c[banana_column.foreign_key.column_name]
                 label = foreign_table.c[banana_column.foreign_key.column_display]
 
-                stmt = (
+                query = (
                     select(id_col)
                     .select_from(foreign_table)
                     .where(label == self.new_value)
                 )
 
-                result = conn.execute(stmt)
+                result = conn.execute(query)
                 rows = result.fetchall()
                 self.new_value = rows[0][0]
 
         with db.engine.connect() as conn:
-            stmt = (
+            query = (
                 update(table_data)
                 .where(table_data.c[self.banana_table.primary_key.name] == self.row_id)
                 .values({self.col_id: self.new_value})
             )
-            conn.execute(stmt)
+            conn.execute(query)
             conn.commit()

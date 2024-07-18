@@ -1,13 +1,14 @@
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
+from sqlalchemy import Table, MetaData, select
 
 from .errors import (
     MultipleBananaTablesWithSameName,
     NoBananaTableFound,
     NoBananaTableSelected,
 )
-from .utils import read_yaml, config
+from .utils import read_sql, read_yaml, config, db
 
 
 class BananaForeignKey(BaseModel):
@@ -62,6 +63,8 @@ class BananaTable(BaseModel):
 
 class BananaTables(BaseModel):
     tables: list[BananaTable]
+    group_name: Optional[str] = None
+    display_order: Optional[int] = None
 
     def __getitem__(self, table_name: str) -> BananaTable:
         tbs = [table for table in self.tables if table.name == table_name]
@@ -76,7 +79,23 @@ class BananaTables(BaseModel):
         return tbs[0]
 
 
-def get_table_model(table_name: str) -> BananaTable:
-    data = read_yaml(config.tables_file)
+def get_table_model(table_name: str, group_name: str) -> BananaTable:
+    metadata = MetaData()
+    table = Table(
+        config.indexing_table,
+        metadata,
+        schema=config.indexing_schema,
+        autoload_with=db.engine,
+    )
+
+    query = (
+        select(table.c.config_path)
+        .select_from(table)
+        .where(table.c.table_name == table_name, table.c.group_name == group_name)
+    )
+
+    config_file = read_sql(query)[0][0]
+
+    data = read_yaml(config_file)
     tables = BananaTables(**data)
     return tables[table_name]

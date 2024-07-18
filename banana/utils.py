@@ -1,14 +1,18 @@
+from typing import Optional
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel, DirectoryPath, PositiveInt
 import yaml
 
 
 class Config(BaseModel):
     connection_string: str
     port: PositiveInt = 4000
-    tables_file: str = "tables.yaml"
+    table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
+    indexing_table: str = "banana__indexing"
+    indexing_schema: Optional[str] = None
 
 
 def read_yaml(file) -> dict:

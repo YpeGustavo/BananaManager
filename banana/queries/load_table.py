@@ -10,21 +10,21 @@ class SqlAlchemyStatement:
         self.metadata = MetaData()
 
         self.table = self.define_table()
-        self.stmt = self.construct_stmt()
+        self.query = self.construct_query()
 
-    def construct_stmt(self):
+    def construct_query(self):
         table_alias = self.table.alias()
-        columns_stmt = [
+        columns_query = [
             table_alias.c[self.banana_table.primary_key.name].label(
                 self.banana_table.primary_key.display_name
             )
         ]
 
-        joins_stmt = []
+        joins_query = []
 
         for column in self.banana_table.columns:
             if column.foreign_key is None:
-                columns_stmt.append(
+                columns_query.append(
                     table_alias.c[column.name].label(column.display_name)
                 )
             else:
@@ -35,12 +35,12 @@ class SqlAlchemyStatement:
                     schema=column.foreign_key.schema_name,
                 )
                 fk_table_alias = fk_table.alias()
-                columns_stmt.append(
+                columns_query.append(
                     fk_table_alias.c[column.foreign_key.column_display].label(
                         column.display_name
                     )
                 )
-                joins_stmt.append(
+                joins_query.append(
                     (
                         fk_table_alias,
                         table_alias.c[column.name]
@@ -48,8 +48,8 @@ class SqlAlchemyStatement:
                     )
                 )
 
-        query = select(*columns_stmt).select_from(table_alias)
-        for fk_table_alias, join_condition in joins_stmt:
+        query = select(*columns_query).select_from(table_alias)
+        for fk_table_alias, join_condition in joins_query:
             query = query.outerjoin(fk_table_alias, join_condition)
 
         return query
@@ -78,7 +78,8 @@ class SqlAlchemyStatement:
 
 class LoadTableCallback:
     def __init__(self, pathname: str):
-        self.banana_table = get_table_model(pathname[1:])
+        _, group_name, table_name = pathname.split("/")
+        self.banana_table = get_table_model(table_name, group_name)
 
     def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:
@@ -96,9 +97,9 @@ class LoadTableCallback:
                 autoload_with=db.engine,
             )
 
-            stmt = select(foreign_table.c[column.foreign_key.column_display])
-            stmt = stmt.select_from(foreign_table)
-            rows = read_sql(stmt)
+            query = select(foreign_table.c[column.foreign_key.column_display])
+            query = query.select_from(foreign_table)
+            rows = read_sql(query)
 
             return {
                 "headerName": column.display_name,
@@ -124,7 +125,7 @@ class LoadTableCallback:
     @property
     def row_data(self):
         sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
-        rows = read_sql(sqlalchemy_table.stmt)
+        rows = read_sql(sqlalchemy_table.query)
 
         # Define Rows
         cols = [self.banana_table.primary_key.name] + [

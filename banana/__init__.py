@@ -1,4 +1,4 @@
-from .manager import Banana
+from .main import Banana
 
 
 __version__ = "0.1.3"
