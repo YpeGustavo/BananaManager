@@ -28,6 +28,6 @@ setup(
     license="MIT",
     packages=find_packages(),
     include_package_data=True,
-    install_requires=["dash-ag-grid", "pydantic", "sqlalchemy", "pyyaml"],
+    install_requires=["dash-ag-grid", "pydantic", "pyyaml", "Flask-SQLAlchemy"],
     url="https://github.com/GusFurtado/BananaManager",
 )
