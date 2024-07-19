@@ -6,7 +6,11 @@ from ..utils import read_sql, config, db, server
 
 class LoadMenuCallback:
     def __init__(self, pathname: str):
-        _, self.selected_group, self.selected_table = pathname.split("/")
+        try:
+            _, self.selected_group, self.selected_table = pathname.split("/")
+        except ValueError:
+            self.selected_group = None
+            self.selected_table = None
 
     def get_result(self) -> list[tuple]:
         with server.app_context():
