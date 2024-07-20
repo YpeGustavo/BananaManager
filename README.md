@@ -18,6 +18,132 @@ To install Banana Manager, simply use pip:
 pip install banana-manager
 ```
 
+Also, remember to install the appropriate database connector for your project, like `pyodbc` or `psycopg2`. If you’re unsure, SQLAlchemy will inform you when you load your application.
+
+Additionally, consider installing a production server like `waitress`:
+
+```bash
+pip install waitress
+```
+
+## Getting started
+
+At the end of this tutorial, you’ll have a folder structure similar to the following:
+
+```
+my_manager
+    └─ app.py
+    └─ config.yaml
+    └─ my_tables
+            └─ my_group_of_tables.yaml
+            └─ another_group_of_tables.yaml
+```
+
+### Configuring the Manager
+
+Create a `config.yaml` file in the root folder of your project with the following structure:
+
+```yaml
+connection_string: <string>
+data_path: "data"
+table_paths: ["tables"]
+title: "Banana Database Manager"
+```
+
+- **connection_string** *(str)* : Your database URL.
+- **data_path** *(str, default="data")* : The folder where the app data files will be stored.
+- **table_paths** *(list[str], default=["tables"])* : List of folder where the table models YAML files are stored.
+- **title** *(str, default="Banana Database Manager")* : HTML header title attribute.
+
+### Defining the tables
+
+The tables can be defined using YAML files located in the folders specified in the `config.yaml`. If no folder is specified, create a new folder named "tables" in the root folder.
+
+Each YAML file represents a group containing a list of tables. Here’s the structure:
+
+```yaml
+group_name: <optional string>
+display_order: <optional integer>
+tables:
+  - name: <string>
+    schema_name: <optional string>
+    display_name: <optional string>
+    primary_key:
+      name: <string>
+      display_name: <optional string>
+    columns:
+      - name: <string>
+        display_name: <optional string>
+        foreign_key: (optional)
+          table_name: <string>
+          schema_name: <optional string>
+          column_name: <string>
+          column_display: <string>
+      - <other columns>
+      
+  - <other tables>
+```
+
+#### Group configuration
+
+- **group_name** *(str, optional)* : Name of the group that will be displayed in the side menu.
+- **display_order** *(int, optional)* : Order which the groups will be stacked in the side menu.
+- **tables** *(list)* : List of table configurations.
+
+#### Table configuration
+
+- **name** *(str)* : Name of the table in the database.
+- **schema_name** *(str, optional)* : Schema where the table is located in the database.
+- **display_name** : *(str, optional)* : Name that will be displayed at the side menu.
+- **primary_key** *(dict)* : Primary key configuration.
+- **columns** *(list)* : List of column configurations.
+
+#### Primary key configuration
+
+- **name** *(str)* : Name of the column in the database that will be used as primary key.
+- **display_name** *(str, optional)* : Name that will be displayed in the table.
+
+#### Column configuration
+
+- **name** *(str)* : Name of the column in the database.
+- **display_name** *(str, optional)* : Name that will be displayed in the table.
+- **foreign_key** *(dict, optional)* : Foreign key configuration.
+
+#### Foreign key configuration
+
+- **table_name** *(str)* : Name of the foreign table in the database.
+- **schema_name** *(str, optional)* : Schema where the foreign table is located in the database.
+- **column_name** *(str)* : Name of the referenced column in the database.
+- **column_display** *(str)* : Values that will be displayed in the app.
+
+### Load the application
+
+Create an app.py file in the root folder:
+
+```python
+from banana import Banana
+
+app = Banana()
+MY_PORT = 4000 
+
+if __name__ == "__main__":
+    app.run_server(port=MY_PORT)
+```
+
+This will load a development server in the selected port. Consider running a production server with `waitress`:
+
+```python
+from banana import Banana
+from waitress import serve
+
+app = Banana()
+MY_PORT = 4000
+
+if __name__ == "__main__":
+    serve(app.server, port=MY_PORT)
+```
+
+
 ## Roadmap
 
 | Version  | Description                 | Release date               |
