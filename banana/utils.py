@@ -1,18 +1,19 @@
-from typing import Optional
-
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from pydantic import BaseModel, DirectoryPath, PositiveInt
+from pydantic import BaseModel, DirectoryPath, PositiveInt, field_validator
 import yaml
 
 
 class Config(BaseModel):
     connection_string: str
+    data_path: str = DirectoryPath("data")
     port: PositiveInt = 4000
     table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
-    indexing_table: str = "banana__indexing"
-    indexing_schema: Optional[str] = None
+
+    @field_validator("data_path")
+    def _validate_date_path(value):
+        return DirectoryPath(value)
 
 
 def read_yaml(file) -> dict:

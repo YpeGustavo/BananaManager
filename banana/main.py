@@ -1,11 +1,10 @@
 from importlib import resources
 
-from dash import Dash, Input, Output, State, html, ALL, ctx
+from dash import Dash, Input, Output, State
 
 from .queries import InitApp, LoadMenuCallback, LoadTableCallback, UpdateCellCallback
 from .layout import layout
-from .models import BananaTables
-from .utils import read_yaml, config, server
+from .utils import config, server
 
 
 class Banana(Dash):

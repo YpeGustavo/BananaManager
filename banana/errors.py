@@ -37,6 +37,17 @@ class MultipleBananaTablesWithSameName(BananaError):
         super().__init__(self.message)
 
 
+class MultipleBananaGroupsWithSameName(BananaError):
+    """Raised when multiple tables with the same name are found."""
+
+    def __init__(self, table_name, message: Optional[str] = None):
+        if message is None:
+            message = f"Multiple tables with the name '{table_name}' were found. Please use a unique name."
+        self.table_name = table_name
+        self.message = message
+        super().__init__(self.message)
+
+
 class NoBananaTableFound(BananaError):
     """Raised when no table is found."""
 

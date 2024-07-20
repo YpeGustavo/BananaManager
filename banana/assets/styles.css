@@ -67,6 +67,7 @@ body {
   padding: 5px;
   margin: 5px 0;
   color: var(--color-info);
+  text-transform: uppercase;
 }
 
 .menu-hr {

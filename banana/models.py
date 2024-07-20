@@ -1,14 +1,14 @@
+import json
 from typing import Optional
 
 from pydantic import BaseModel, model_validator
-from sqlalchemy import Table, MetaData, select
 
 from .errors import (
     MultipleBananaTablesWithSameName,
     NoBananaTableFound,
     NoBananaTableSelected,
 )
-from .utils import read_sql, read_yaml, config, db
+from .utils import config
 
 
 class BananaForeignKey(BaseModel):
@@ -61,7 +61,7 @@ class BananaTable(BaseModel):
         return self
 
 
-class BananaTables(BaseModel):
+class BananaGroup(BaseModel):
     tables: list[BananaTable]
     group_name: Optional[str] = None
     display_order: Optional[int] = None
@@ -80,22 +80,8 @@ class BananaTables(BaseModel):
 
 
 def get_table_model(table_name: str, group_name: str) -> BananaTable:
-    metadata = MetaData()
-    table = Table(
-        config.indexing_table,
-        metadata,
-        schema=config.indexing_schema,
-        autoload_with=db.engine,
-    )
-
-    query = (
-        select(table.c.config_path)
-        .select_from(table)
-        .where(table.c.table_name == table_name, table.c.group_name == group_name)
-    )
-
-    config_file = read_sql(query)[0][0]
-
-    data = read_yaml(config_file)
-    tables = BananaTables(**data)
-    return tables[table_name]
+    json_dir = config.data_path.joinpath("models.json")
+    with open(json_dir, "r") as f:
+        models = json.load(f)
+        table = BananaTable(**models[group_name]["tables"][table_name])
+    return table
