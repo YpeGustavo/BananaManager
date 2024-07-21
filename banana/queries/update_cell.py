@@ -1,7 +1,10 @@
+from datetime import datetime
+import json
+
 from sqlalchemy import MetaData, Table, select, update
 
 from ..models import get_table_model
-from ..utils import db
+from ..utils import config, db
 
 
 class UpdateCellCallback:
@@ -16,6 +19,23 @@ class UpdateCellCallback:
         self.metadata = MetaData()
         _, group_name, table_name = pathname.split("/")
         self.banana_table = get_table_model(table_name, group_name)
+
+    def logging(self):
+        json_data = {
+            "user_name": config.connection.username,
+            "table_name": self.banana_table.name,
+            "schema_name": self.banana_table.schema_name,
+            "column_id": self.col_id,
+            "row_id": self.row_id,
+            "new_value": self.new_value,
+            "log_time": str(datetime.now()),
+            "status": "success",
+        }
+        json_string = json.dumps(json_data)
+
+        log_file = config.data_path.joinpath("update.log")
+        with open(log_file, "a+") as opened_file:
+            opened_file.write(json_string + "\n")
 
     def exec(self):
         table_data = Table(
@@ -59,3 +79,4 @@ class UpdateCellCallback:
             )
             conn.execute(query)
             conn.commit()
+            self.logging()
