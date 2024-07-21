@@ -1,11 +1,36 @@
+from os import environ
+from typing import Optional
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from pydantic import BaseModel, DirectoryPath, PositiveInt, field_validator
+from pydantic import BaseModel, DirectoryPath, PositiveInt, field_validator, Field
+from sqlalchemy.engine.url import URL
 import yaml
 
 
+class Connection(BaseModel):
+    drivername: Optional[str] = None
+    username: Optional[str] = Field(default=None, validate_default=True)
+    password: Optional[str] = Field(default=None, validate_default=True)
+    host: Optional[str] = None
+    port: Optional[PositiveInt] = None
+    database: Optional[str] = None
+
+    @field_validator("username")
+    def _validate_username(value):
+        if value is None:
+            value = environ.get("BANANA_USERNAME", None)
+        return value
+
+    @field_validator("password")
+    def _validate_password(value):
+        if value is None:
+            return environ.get("BANANA_PASSWORD", None)
+        return value
+
+
 class Config(BaseModel):
-    connection_string: str
+    connection: Connection
     data_path: str = DirectoryPath("data")
     port: PositiveInt = 4000
     table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
@@ -14,6 +39,18 @@ class Config(BaseModel):
     @field_validator("data_path")
     def _validate_date_path(value):
         return DirectoryPath(value)
+
+    @property
+    def connection_string(self) -> str:
+        return URL(
+            drivername=self.connection.drivername,
+            username=self.connection.username,
+            password=self.connection.password,
+            host=self.connection.host,
+            port=self.connection.port,
+            database=self.connection.database,
+            query={},
+        )
 
 
 def read_yaml(file) -> dict:
@@ -26,12 +63,12 @@ def read_yaml(file) -> dict:
         raise Exception(f"Error parsing YAML config file: {exc}")
 
 
-def load_config():
+def __load_config():
     data = read_yaml("config.yaml")
     return Config(**data)
 
 
-config = load_config()
+config = __load_config()
 
 server = Flask(config.title)
 server.config["SQLALCHEMY_DATABASE_URI"] = config.connection_string
