@@ -116,6 +116,7 @@ class LoadTableCallback:
                 "headerName": self.banana_table.primary_key.display_name,
                 "field": self.banana_table.primary_key.name,
                 "editable": False,
+                "hide": self.banana_table.primary_key.hide,
             },
         ]
 

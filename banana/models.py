@@ -27,6 +27,7 @@ class BananaForeignKey(BaseModel):
 class BananaPrimaryKey(BaseModel):
     name: str
     display_name: Optional[str] = None
+    hide: bool = False
 
     @model_validator(mode="after")
     def validate_model(self):
