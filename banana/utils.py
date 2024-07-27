@@ -1,5 +1,5 @@
 from os import environ
-from typing import Optional
+from typing import Any, Optional
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
@@ -35,6 +35,7 @@ class Config(BaseModel):
     port: PositiveInt = 4000
     table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
+    grid_options: dict[str, Any] = {}
 
     @field_validator("data_path")
     def _validate_date_path(value):

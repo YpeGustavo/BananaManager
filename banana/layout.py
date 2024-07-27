@@ -1,6 +1,8 @@
 from dash import dcc, html
 from dash_ag_grid import AgGrid
 
+from .utils import config
+
 
 layout = html.Div(
     [
@@ -17,7 +19,7 @@ layout = html.Div(
                             "sortable": True,
                             "editable": True,
                         },
-                        dashGridOptions={"pagination": True},
+                        dashGridOptions=config.grid_options,
                         style={"height": "calc(100vh - 85px)", "overflow": "auto"},
                     ),
                 ],
