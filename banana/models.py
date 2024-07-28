@@ -28,6 +28,8 @@ class BananaPrimaryKey(BaseModel):
     name: str
     display_name: Optional[str] = None
     hide: bool = False
+    filter: bool = True
+    sortable: bool = True
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -40,6 +42,9 @@ class BananaColumn(BaseModel):
     name: str
     display_name: Optional[str] = None
     foreign_key: Optional[BananaForeignKey] = None
+    editable: bool = True
+    filter: bool = True
+    sortable: bool = True
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -73,18 +78,6 @@ class BananaGroup(BaseModel):
     tables: list[BananaTable]
     group_name: Optional[str] = None
     display_order: Optional[int] = None
-
-    def __getitem__(self, table_name: str) -> BananaTable:
-        tbs = [table for table in self.tables if table.name == table_name]
-
-        if not table_name:
-            raise NoBananaTableSelected()
-        if len(tbs) == 0:
-            raise NoBananaTableFound(table_name)
-        elif len(tbs) > 1:
-            raise MultipleBananaTablesWithSameName(table_name)
-
-        return tbs[0]
 
 
 def get_table_model(table_name: str, group_name: str) -> BananaTable:

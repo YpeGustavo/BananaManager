@@ -14,11 +14,6 @@ layout = html.Div(
                     html.H1(id="banana--table-title", className="table-title"),
                     AgGrid(
                         id="banana--table",
-                        defaultColDef={
-                            "filter": True,
-                            "sortable": True,
-                            "editable": True,
-                        },
                         dashGridOptions=config.grid_options,
                         style={"height": "calc(100vh - 85px)", "overflow": "auto"},
                     ),

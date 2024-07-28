@@ -97,6 +97,9 @@ class LoadTableCallback:
             return {
                 "headerName": column.display_name,
                 "field": column.name,
+                "editable": column.editable,
+                "filter": column.filter,
+                "sortable": column.sortable,
             }
 
         else:
@@ -127,7 +130,9 @@ class LoadTableCallback:
                 "headerName": self.banana_table.primary_key.display_name,
                 "field": self.banana_table.primary_key.name,
                 "editable": False,
+                "filter": self.banana_table.primary_key.filter,
                 "hide": self.banana_table.primary_key.hide,
+                "sortable": self.banana_table.primary_key.sortable,
             },
         ]
 
