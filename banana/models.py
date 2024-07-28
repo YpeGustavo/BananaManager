@@ -3,11 +3,6 @@ from typing import Optional
 
 from pydantic import BaseModel, model_validator, PositiveInt
 
-from .errors import (
-    MultipleBananaTablesWithSameName,
-    NoBananaTableFound,
-    NoBananaTableSelected,
-)
 from .utils import config
 
 

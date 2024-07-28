@@ -3,9 +3,9 @@ import json
 from sqlalchemy import MetaData, Table, select, func
 
 from ..errors import (
-    InvalidBananaForeignKey,
-    MultipleBananaGroupsWithSameName,
-    MultipleBananaTablesWithSameName,
+    InvalidForeignKey,
+    MultipleGroupsWithSameName,
+    MultipleTablesWithSameName,
 )
 from ..models import BananaGroup, BananaTable
 from ..utils import read_sql, read_yaml, config, db
@@ -50,12 +50,12 @@ class InitApp:
                 rows = read_sql(query)
 
                 if not rows[0][0]:
-                    raise InvalidBananaForeignKey(
+                    raise InvalidForeignKey(
                         foreign_table.name,
                         column.foreign_key.column_name,
                     )
                 elif not rows[0][1]:
-                    raise InvalidBananaForeignKey(
+                    raise InvalidForeignKey(
                         foreign_table.name,
                         column.foreign_key.column_display,
                     )
@@ -77,7 +77,7 @@ class InitApp:
                 # Read every group
                 for file in table_path.rglob(suffix):
                     if file.stem in models:
-                        raise MultipleBananaGroupsWithSameName(file.stem)
+                        raise MultipleGroupsWithSameName(file.stem)
                     data = read_yaml(file)
                     group = BananaGroup(**data)
                     models[file.stem] = {
@@ -89,7 +89,7 @@ class InitApp:
                     # Read every table
                     for table in group.tables:
                         if table.name in models[file.stem]:
-                            raise MultipleBananaTablesWithSameName(table.name)
+                            raise MultipleTablesWithSameName(table.name)
                         self._check_foreign_key_uniqueness(table)
                         models[file.stem]["tables"][table.name] = table.model_dump()
 
