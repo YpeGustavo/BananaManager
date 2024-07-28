@@ -52,6 +52,13 @@ class SqlAlchemyStatement:
         for fk_table_alias, join_condition in joins_query:
             query = query.outerjoin(fk_table_alias, join_condition)
 
+        if self.banana_table.order_by is not None:
+            for column in self.banana_table.order_by:
+                query = query.order_by(column)
+
+        if self.banana_table.limit is not None:
+            query = query.limit(self.banana_table.limit)
+
         return query
 
     def define_table(self):

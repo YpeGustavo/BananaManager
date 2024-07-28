@@ -1,7 +1,7 @@
 import json
 from typing import Optional
 
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, PositiveInt
 
 from .errors import (
     MultipleBananaTablesWithSameName,
@@ -54,6 +54,8 @@ class BananaTable(BaseModel):
     display_name: Optional[str] = None
     schema_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
+    order_by: Optional[list[str]] = None
+    limit: Optional[PositiveInt] = None
 
     @model_validator(mode="after")
     def validate_model(self):
