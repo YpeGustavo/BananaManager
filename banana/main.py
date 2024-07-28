@@ -7,12 +7,15 @@ from .layout import layout
 from .utils import config, server
 
 
+def refresh():
+    with server.app_context():
+        obj = InitApp()
+        obj.refresh()
+
+
 class Banana(Dash):
     def __init__(self):
-        with server.app_context():
-            obj = InitApp()
-            obj.refresh()
-
+        refresh()
         super().__init__(
             server=server,
             assets_folder=resources.files("banana") / "assets",
