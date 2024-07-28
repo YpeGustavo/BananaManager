@@ -113,6 +113,15 @@ class LoadTableCallback:
 
             query = select(foreign_table.c[column.foreign_key.column_display])
             query = query.select_from(foreign_table)
+
+            if column.foreign_key.order_by is not None:
+                for orderby_col in column.foreign_key.order_by:
+                    if orderby_col.desc:
+                        orderby = foreign_table.c[orderby_col.column].desc()
+                    else:
+                        orderby = foreign_table.c[orderby_col.column].asc()
+                    query = query.order_by(orderby)
+
             rows = read_sql(query)
 
             return {

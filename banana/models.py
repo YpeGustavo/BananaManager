@@ -6,11 +6,17 @@ from pydantic import BaseModel, model_validator, PositiveInt
 from .utils import config
 
 
+class BananaOrderBy(BaseModel):
+    column: str
+    desc: bool = False
+
+
 class BananaForeignKey(BaseModel):
     table_name: str
     column_name: str
     column_display: Optional[str] = None
     schema_name: Optional[str] = None
+    order_by: Optional[list[BananaOrderBy]] = None
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -46,11 +52,6 @@ class BananaColumn(BaseModel):
         if self.display_name is None:
             self.display_name = self.name
         return self
-
-
-class BananaOrderBy(BaseModel):
-    column: str
-    desc: bool = False
 
 
 class BananaTable(BaseModel):
