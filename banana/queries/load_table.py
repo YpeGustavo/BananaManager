@@ -54,7 +54,11 @@ class SqlAlchemyStatement:
 
         if self.banana_table.order_by is not None:
             for column in self.banana_table.order_by:
-                query = query.order_by(column)
+                if column.desc:
+                    orderby = table_alias.c[column.column].desc()
+                else:
+                    orderby = table_alias.c[column.column].asc()
+                query = query.order_by(orderby)
 
         if self.banana_table.limit is not None:
             query = query.limit(self.banana_table.limit)

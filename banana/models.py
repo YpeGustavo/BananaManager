@@ -48,13 +48,18 @@ class BananaColumn(BaseModel):
         return self
 
 
+class BananaOrderBy(BaseModel):
+    column: str
+    desc: bool = False
+
+
 class BananaTable(BaseModel):
     name: str
     primary_key: BananaPrimaryKey
     display_name: Optional[str] = None
     schema_name: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
-    order_by: Optional[list[str]] = None
+    order_by: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
 
     @model_validator(mode="after")
