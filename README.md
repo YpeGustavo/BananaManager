@@ -44,16 +44,24 @@ my_manager
 Create a `config.yaml` file in the root folder of your project with the following structure:
 
 ```yaml
-connection_string: <string>
+connection:
+  drivername: <optional str>
+  username: <optional str>
+  password: <optional str>
+  host: <optional str>
+  port: <optional str>
+  database: <optional str>
 data_path: "data"
 table_paths: ["tables"]
 title: "Banana Database Manager"
+grid_options: <optional dict>
 ```
 
-- **connection_string** *(str)* : Your database URL.
+- **connection** *(dict)* : This will create a [SQLAlchemy URL](https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.engine.URL) object. See the section [Dialets](https://docs.sqlalchemy.org/en/20/dialects/) for more information about the appropriate driver.
 - **data_path** *(str, default="data")* : The folder where the app data files will be stored.
 - **table_paths** *(list[str], default=["tables"])* : List of folder where the table models YAML files are stored.
 - **title** *(str, default="Banana Database Manager")* : HTML header title attribute.
+- **grid_options** *(dict[str, str])* : Check [AG Grid Options](https://www.ag-grid.com/react-data-grid/grid-options/) documentation.
 
 ### Defining the tables
 
@@ -71,6 +79,7 @@ tables:
     primary_key:
       name: <string>
       display_name: <optional string>
+      hide: <optional boolean>
     columns:
       - name: <string>
         display_name: <optional string>
@@ -80,7 +89,12 @@ tables:
           column_name: <string>
           column_display: <string>
       - <other columns>
-      
+    order_by: (optional)
+      - column: <string>
+        desc: <optional bool>
+      - <other columns>
+    limit: <optional int>
+
   - <other tables>
 ```
 
@@ -97,11 +111,19 @@ tables:
 - **display_name** : *(str, optional)* : Name that will be displayed at the side menu.
 - **primary_key** *(dict)* : Primary key configuration.
 - **columns** *(list)* : List of column configurations.
+- **order_by** *(list[dict])* : Default ordering of the table rows.
+- **limit** *(int)* : Maximum of rows returned after order by.
 
 #### Primary key configuration
 
 - **name** *(str)* : Name of the column in the database that will be used as primary key.
 - **display_name** *(str, optional)* : Name that will be displayed in the table.
+- **hide** *(bool, optional)* : Hide primary key column.
+
+#### Order by configuration
+
+- **column** *(str)* : Name of the column
+- **desc** *(bool, optional)* : If True, order table by column in descending order.
 
 #### Column configuration
 
@@ -150,9 +172,9 @@ if __name__ == "__main__":
 |----------|-----------------------------|----------------------------|
 | **v0.1** | Load table and update cells | First half of July 2024    |
 | **v0.2** | Table groups                | Second half of July 2024   |
-| **v0.3** | Add and delete rows         | First half of August 2024  |
-| **v0.4** | User authentication         | Second half of August 2024 |
-| **v0.5** | Logging                     | September 2024             |
+| **v0.3** | Logging and configurations  | First half of August 2024  |
+| **v0.4** | Add and delete rows         | Second half of August 2024 |
+| **v0.5** | User authentication         | September 2024             |
 | **v0.6** | Special data types          | October 2024               |
 | **v0.7** | Advanced user authorization | First quarter of 2025      |
 | **v0.8** | Themes                      | 2025                       |
