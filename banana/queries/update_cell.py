@@ -14,6 +14,7 @@ class UpdateCellCallback:
 
         self.col_id = data[0]["colId"]
         self.row_id = data[0]["rowId"]
+        self.old_value = data[0]["oldValue"]
         self.new_value = data[0]["value"]
 
         self.metadata = MetaData()
@@ -27,6 +28,7 @@ class UpdateCellCallback:
             "schema_name": self.banana_table.schema_name,
             "column_id": self.col_id,
             "row_id": self.row_id,
+            "old_value": self.old_value,
             "new_value": self.new_value,
             "log_time": str(datetime.now()),
             "status": "success",

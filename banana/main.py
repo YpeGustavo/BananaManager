@@ -1,6 +1,6 @@
 from importlib import resources
 
-from dash import Dash, Input, Output, State
+from dash import Dash, Input, Output, State, ctx
 
 from .queries import InitApp, LoadMenuCallback, LoadTableCallback, UpdateCellCallback
 from .layout import layout
@@ -47,6 +47,7 @@ class Banana(Dash):
             Input("banana--table", "cellValueChanged"),
             State("banana--location", "pathname"),
         )
-        def update_cell(data, pathname):
+        def update_cell(_, pathname):
+            data = ctx.inputs["banana--table.cellValueChanged"]
             obj = UpdateCellCallback(data, pathname)
             obj.exec()
