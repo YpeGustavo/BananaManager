@@ -1,3 +1,5 @@
+import logging
+from logging.handlers import RotatingFileHandler
 from os import environ
 from typing import Any, Optional
 
@@ -64,22 +66,47 @@ def read_yaml(file) -> dict:
         raise Exception(f"Error parsing YAML config file: {exc}")
 
 
-def __load_config():
+def __get_config() -> Config:
     data = read_yaml("config.yaml")
     return Config(**data)
 
 
-config = __load_config()
+def __get_logger(config: Config) -> logging.Logger:
+    formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+    errorlog_path = config.data_path.joinpath("error.log")
 
-server = Flask(config.title)
-server.config["SQLALCHEMY_DATABASE_URI"] = config.connection_string
-server.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    handler = RotatingFileHandler(errorlog_path, maxBytes=10000, backupCount=1)
+    handler.setLevel(logging.ERROR)
+    handler.setFormatter(formatter)
 
+    logger = logging.getLogger("banana-manager")
+    logger.setLevel(logging.ERROR)
+    logger.addHandler(handler)
+
+    return logger
+
+
+def __get_server(config: Config, logger: logging.Logger) -> Flask:
+    server = Flask(config.title)
+    server.config["SQLALCHEMY_DATABASE_URI"] = config.connection_string
+    server.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    @server.errorhandler(Exception)
+    def handle_exception(e):
+        logger.error(str(e), exc_info=True)
+        return "An internal error occurred", 500
+
+    return server
+
+
+config = __get_config()
+logger = __get_logger(config)
+server = __get_server(config, logger)
 db = SQLAlchemy(server)
 
 
-def read_sql(statement):
+def read_sql(query):
     with db.engine.connect() as conn:
-        result = conn.execute(statement)
+        result = conn.execute(query)
         rows = result.fetchall()
     return rows
