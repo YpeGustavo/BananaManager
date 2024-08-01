@@ -110,3 +110,12 @@ def read_sql(query):
         result = conn.execute(query)
         rows = result.fetchall()
     return rows
+
+
+def split_pathname(pathname: str) -> tuple[str]:
+    try:
+        _, group, table = pathname.split("/")
+    except ValueError:
+        group = None
+        table = None
+    return group, table

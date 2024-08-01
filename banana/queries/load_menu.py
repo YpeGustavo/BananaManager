@@ -2,16 +2,12 @@ import json
 
 from dash import html
 
-from ..utils import config
+from ..utils import config, split_pathname
 
 
 class LoadMenuCallback:
     def __init__(self, pathname: str):
-        try:
-            _, self.selected_group, self.selected_table = pathname.split("/")
-        except ValueError:
-            self.selected_group = None
-            self.selected_table = None
+        self.selected_group, self.selected_table = split_pathname(pathname)
 
     def _get_models(self) -> list[tuple]:
         json_dir = config.data_path.joinpath("models.json")

@@ -1,7 +1,8 @@
+from dash.exceptions import PreventUpdate
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
 from ..models import BananaColumn, BananaTable, get_table_model
-from ..utils import read_sql, db
+from ..utils import read_sql, split_pathname, db
 
 
 class SqlAlchemyStatement:
@@ -89,7 +90,10 @@ class SqlAlchemyStatement:
 
 class LoadTableCallback:
     def __init__(self, pathname: str):
-        _, group_name, table_name = pathname.split("/")
+        group_name, table_name = split_pathname(pathname)
+        if table_name is None:
+            raise PreventUpdate
+
         self.banana_table = get_table_model(table_name, group_name)
 
     def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:

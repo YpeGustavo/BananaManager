@@ -4,7 +4,7 @@ import json
 from sqlalchemy import MetaData, Table, select, update
 
 from ..models import get_table_model
-from ..utils import config, db
+from ..utils import config, db, split_pathname
 
 
 class UpdateCellCallback:
@@ -18,7 +18,7 @@ class UpdateCellCallback:
         self.new_value = data[0]["value"]
 
         self.metadata = MetaData()
-        _, group_name, table_name = pathname.split("/")
+        group_name, table_name = split_pathname(pathname)
         self.banana_table = get_table_model(table_name, group_name)
 
     def logging(self):
