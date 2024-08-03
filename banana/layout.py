@@ -11,7 +11,28 @@ layout = html.Div(
         html.Div(
             html.Div(
                 [
-                    html.H1(id="banana--table-title", className="table-title"),
+                    html.Div(
+                        [
+                            html.Span(
+                                id="banana--table-title",
+                                className="table-title",
+                            ),
+                            html.Span(
+                                [
+                                    html.Button(
+                                        "Refresh",
+                                        id="banana--refresh-button",
+                                        className="banana-button banana-button-refresh",
+                                    )
+                                ]
+                            ),
+                        ],
+                        style={
+                            "display": "flex",
+                            "justify-content": "space-between",
+                            "margin": "-10px 0 10px",
+                        },
+                    ),
                     AgGrid(
                         id="banana--table",
                         dashGridOptions=config.grid_options,

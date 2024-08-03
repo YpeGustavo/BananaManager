@@ -26,8 +26,11 @@ class Banana(Dash):
         @self.callback(
             Output("banana--menu", "children"),
             Input("banana--location", "pathname"),
+            Input("banana--refresh-button", "n_clicks"),
         )
-        def load_menu(pathname: str):
+        def load_menu(pathname: str, _):
+            if ctx.triggered_id == "banana--refresh-button":
+                refresh()
             obj = LoadMenuCallback(pathname)
             return obj.menu
 
