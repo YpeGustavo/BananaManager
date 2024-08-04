@@ -1,6 +1,6 @@
 import json
 
-from dash import html
+import dash_mantine_components as dmc
 
 from ..utils import config, split_pathname
 
@@ -45,20 +45,34 @@ class LoadMenuCallback:
 
         links = []
         for group in models:
-            links.append(html.Hr(className="menu-hr"))
-            label = html.Div(group["group_display_name"], className="menu-group")
-            links.append(label)
+            links.append(
+                dmc.Divider(
+                    label=group["group_display_name"],
+                    mt=20,
+                    color=config.theme,
+                    styles={
+                        "label": {"color": dmc.DEFAULT_THEME["colors"][config.theme][1]}
+                    },
+                )
+            )
             for table in group["tables"]:
-                className = "menu-item"
-                if (group["group_name"] == self.selected_group) and (
-                    table["table_name"] == self.selected_table
-                ):
-                    className += " selected"
-
-                link = html.A(
+                link = dmc.Button(
                     table["table_display_name"],
-                    href=f'/{group["group_name"]}/{table["table_name"]}',
-                    className=className,
+                    variant=(
+                        "filled"
+                        if (group["group_name"] == self.selected_group)
+                        and (table["table_name"] == self.selected_table)
+                        else "subtle"
+                    ),
+                    color=config.theme,
+                    radius="md",
+                    size="xs",
+                    styles={"inner": {"justify-content": "left", "color": "white"}},
+                    id={
+                        "component": "menu-item",
+                        "group": group["group_name"],
+                        "table": table["table_name"],
+                    },
                 )
                 links.append(link)
 

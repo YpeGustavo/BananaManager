@@ -1,10 +1,21 @@
 from importlib import resources
+from os import environ
 
-from dash import Dash, Input, Output, State, ctx
+from dash import Dash, Input, Output, State, ctx, ALL, _dash_renderer
+from dash.exceptions import PreventUpdate
 
-from .queries import InitApp, LoadMenuCallback, LoadTableCallback, UpdateCellCallback
-from .layout import layout
+from .queries import (
+    InitApp,
+    LoadForm,
+    LoadMenuCallback,
+    LoadTableCallback,
+    UpdateCellCallback,
+)
+from .layout import Layout
 from .utils import config, server
+
+
+_dash_renderer._set_react_version("18.2.0")
 
 
 def refresh():
@@ -21,7 +32,7 @@ class Banana(Dash):
             assets_folder=resources.files("banana") / "assets",
             title=config.title,
         )
-        self.layout = layout
+        self.layout = Layout()
 
         @self.callback(
             Output("banana--menu", "children"),
@@ -33,6 +44,16 @@ class Banana(Dash):
                 refresh()
             obj = LoadMenuCallback(pathname)
             return obj.menu
+
+        @self.callback(
+            Output("banana--location", "pathname"),
+            Input({"component": "menu-item", "group": ALL, "table": ALL}, "n_clicks"),
+            prevent_initial_call=True,
+        )
+        def change_pathname(_):
+            if len(ctx.triggered) != 1:
+                raise PreventUpdate
+            return f"/{ctx.triggered_id['group']}/{ctx.triggered_id['table']}"
 
         @self.callback(
             Output("banana--table", "columnDefs"),
@@ -54,3 +75,14 @@ class Banana(Dash):
             data = ctx.inputs["banana--table.cellValueChanged"]
             obj = UpdateCellCallback(data, pathname)
             obj.exec()
+
+        @self.callback(
+            Output("banana--modal", "opened"),
+            Output("banana--modal-form", "children"),
+            Input("banana--add-button", "n_clicks"),
+            State("banana--location", "pathname"),
+            prevent_initial_call=True,
+        )
+        def open_modal(_, pathname: str):
+            obj = LoadForm(pathname)
+            return True, obj.form
