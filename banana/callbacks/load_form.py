@@ -24,7 +24,10 @@ class LoadForm:
     def __get_field(self, field: dict[str, str]):
         return [
             dmc.Text(field["display_name"]),
-            dmc.TextInput(id={"component": "form-item", "column": field["name"]}),
+            dmc.TextInput(
+                id={"component": "form-item", "column": field["name"]},
+                radius="md",
+            ),
         ]
 
     @property

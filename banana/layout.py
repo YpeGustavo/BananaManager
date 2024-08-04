@@ -12,7 +12,7 @@ class Layout(dmc.MantineProvider):
             html.Div(
                 [
                     dcc.Location(id="banana--location", refresh=False),
-                    self.modal(),
+                    self.add_modal(),
                     self.left_section(),
                     self.right_section(),
                 ],
@@ -80,12 +80,38 @@ class Layout(dmc.MantineProvider):
             justify="space-between",
         )
 
-    def modal(self) -> dmc.Modal:
+    def add_modal(self) -> dmc.Modal:
         return dmc.Modal(
             [
-                dmc.SimpleGrid(id="banana--modal-form", cols=2),
-                dmc.Button("Add row", id="banana--insert-button", color="green"),
+                dmc.SimpleGrid(id="banana--add-form", cols=2),
+                dmc.Center(
+                    [
+                        dmc.Button(
+                            "Cancel",
+                            id="banana--add-cancel",
+                            color="red",
+                            radius="md",
+                            variant="subtle",
+                            leftSection=DashIconify(
+                                icon="mingcute:close-circle-fill",
+                                height=20,
+                            ),
+                            mr=10,
+                        ),
+                        dmc.Button(
+                            "Confirm",
+                            id="banana--add-confirm",
+                            color="green",
+                            radius="md",
+                            leftSection=DashIconify(
+                                icon="mingcute:add-circle-fill",
+                                height=20,
+                            ),
+                        ),
+                    ],
+                    mt=20,
+                ),
             ],
-            id="banana--modal",
+            id="banana--add-modal",
             opened=False,
         )
