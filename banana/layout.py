@@ -82,7 +82,10 @@ class Layout(dmc.MantineProvider):
 
     def modal(self) -> dmc.Modal:
         return dmc.Modal(
-            dmc.SimpleGrid(id="banana--modal-form", cols=2),
+            [
+                dmc.SimpleGrid(id="banana--modal-form", cols=2),
+                dmc.Button("Add row", id="banana--insert-button", color="green"),
+            ],
             id="banana--modal",
             opened=False,
         )

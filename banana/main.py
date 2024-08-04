@@ -6,6 +6,7 @@ from dash.exceptions import PreventUpdate
 
 from .queries import (
     InitApp,
+    InsertRow,
     LoadForm,
     LoadMenuCallback,
     LoadTableCallback,
@@ -77,7 +78,7 @@ class Banana(Dash):
             obj.exec()
 
         @self.callback(
-            Output("banana--modal", "opened"),
+            Output("banana--modal", "opened", allow_duplicate=True),
             Output("banana--modal-form", "children"),
             Input("banana--add-button", "n_clicks"),
             State("banana--location", "pathname"),
@@ -86,3 +87,15 @@ class Banana(Dash):
         def open_modal(_, pathname: str):
             obj = LoadForm(pathname)
             return True, obj.form
+
+        @self.callback(
+            Output("banana--modal", "opened"),
+            Input("banana--insert-button", "n_clicks"),
+            State("banana--location", "pathname"),
+            State({"component": "form-item", "column": ALL}, "value"),
+            prevent_initial_call=True,
+        )
+        def add_row(_click, pathname, _fields):
+            obj = InsertRow(pathname, ctx.states_list[1])
+            obj.insert()
+            return False
