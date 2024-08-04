@@ -4,7 +4,7 @@ from os import environ
 from dash import Dash, Input, Output, State, ctx, ALL, _dash_renderer
 from dash.exceptions import PreventUpdate
 
-from .queries import (
+from .callbacks import (
     InitApp,
     InsertRow,
     LoadForm,
