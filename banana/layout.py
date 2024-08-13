@@ -12,7 +12,7 @@ class Layout(dmc.MantineProvider):
             html.Div(
                 [
                     dcc.Location(id="banana--location", refresh=False),
-                    self.add_modal(),
+                    self.insert_modal(),
                     self.left_section(),
                     self.right_section(),
                 ],
@@ -57,8 +57,8 @@ class Layout(dmc.MantineProvider):
                 dmc.Group(
                     [
                         dmc.Button(
-                            "Add row",
-                            id="banana--add-button",
+                            "Insert",
+                            id="banana--insert-button",
                             color="green",
                             radius="md",
                             leftSection=DashIconify(
@@ -80,15 +80,15 @@ class Layout(dmc.MantineProvider):
             justify="space-between",
         )
 
-    def add_modal(self) -> dmc.Modal:
+    def insert_modal(self) -> dmc.Modal:
         return dmc.Modal(
             [
-                dmc.SimpleGrid(id="banana--add-form", cols=2),
+                dmc.SimpleGrid(id="banana--insert-form", cols=2),
                 dmc.Center(
                     [
                         dmc.Button(
                             "Cancel",
-                            id="banana--add-cancel",
+                            id="banana--insert-cancel",
                             color="red",
                             radius="md",
                             variant="subtle",
@@ -100,7 +100,7 @@ class Layout(dmc.MantineProvider):
                         ),
                         dmc.Button(
                             "Confirm",
-                            id="banana--add-confirm",
+                            id="banana--insert-confirm",
                             color="green",
                             radius="md",
                             leftSection=DashIconify(
@@ -112,6 +112,6 @@ class Layout(dmc.MantineProvider):
                     mt=20,
                 ),
             ],
-            id="banana--add-modal",
+            id="banana--insert-modal",
             opened=False,
         )

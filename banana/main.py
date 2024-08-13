@@ -78,9 +78,9 @@ class Banana(Dash):
             obj.exec()
 
         @self.callback(
-            Output("banana--add-modal", "opened", allow_duplicate=True),
-            Output("banana--add-form", "children"),
-            Input("banana--add-button", "n_clicks"),
+            Output("banana--insert-modal", "opened", allow_duplicate=True),
+            Output("banana--insert-form", "children"),
+            Input("banana--insert-button", "n_clicks"),
             State("banana--location", "pathname"),
             prevent_initial_call=True,
         )
@@ -89,15 +89,15 @@ class Banana(Dash):
             return True, obj.form
 
         @self.callback(
-            Output("banana--add-modal", "opened"),
-            Input("banana--add-confirm", "n_clicks"),
-            Input("banana--add-cancel", "n_clicks"),
+            Output("banana--insert-modal", "opened"),
+            Input("banana--insert-confirm", "n_clicks"),
+            Input("banana--insert-cancel", "n_clicks"),
             State("banana--location", "pathname"),
             State({"component": "form-item", "column": ALL}, "value"),
             prevent_initial_call=True,
         )
-        def add_row(_confirm, _cancel, pathname, _fields):
-            if ctx.triggered_id == "banana--add-cancel":
+        def insert_row(_confirm, _cancel, pathname, _fields):
+            if ctx.triggered_id == "banana--insert-cancel":
                 return False
 
             obj = InsertRow(pathname, ctx.states_list[1])
