@@ -1,14 +1,17 @@
+from json import dumps
+
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
+from ..log import log_insert
 from ..models import get_table_model
-from ..utils import split_pathname, db
+from ..utils import split_pathname, config, db
 
 
 class InsertRow:
     def __init__(self, pathname, fields):
-        group, table = split_pathname(pathname)
-        self.banana_table = get_table_model(table, group)
+        self.group, table = split_pathname(pathname)
+        self.banana_table = get_table_model(table, self.group)
         self.values = self.get_values(fields)
         self.metadata = MetaData()
         self.table = None
@@ -38,7 +41,13 @@ class InsertRow:
             try:
                 session.execute(query)
                 session.commit()
-                print(f"Inserted values: {self.values}")
+                log_insert(
+                    user_name=config.connection.username,
+                    group_name=self.group,
+                    table_name=self.banana_table.name,
+                    schema_name=self.banana_table.schema_name,
+                    new_values=dumps(self.values),
+                )
             except Exception as e:
                 session.rollback()
                 print(f"Error inserting row: {e}")
