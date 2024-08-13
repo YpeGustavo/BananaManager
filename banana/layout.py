@@ -12,6 +12,7 @@ class Layout(dmc.MantineProvider):
             html.Div(
                 [
                     dcc.Location(id="banana--location", refresh=False),
+                    dcc.Store(id="banana--refresh-table", data=0),
                     self.insert_modal(),
                     self.left_section(),
                     self.right_section(),

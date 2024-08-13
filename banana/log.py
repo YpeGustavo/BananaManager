@@ -73,7 +73,7 @@ def log_insert(user_name, group_name, table_name, schema_name, new_values) -> No
         group_name=group_name,
         table_name=table_name,
         schema_name=schema_name,
-        log_type=LogType.UPDATE,
+        log_type=LogType.INSERT,
         log_index=update_id,
     )
 

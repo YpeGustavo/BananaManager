@@ -1,5 +1,5 @@
 from importlib import resources
-from os import environ
+from time import time
 
 from dash import Dash, Input, Output, State, ctx, ALL, _dash_renderer
 from dash.exceptions import PreventUpdate
@@ -62,9 +62,10 @@ class Banana(Dash):
             Output("banana--table", "getRowId"),
             Output("banana--table-title", "children"),
             Input("banana--location", "pathname"),
+            Input("banana--refresh-table", "data"),
             prevent_initial_call=True,
         )
-        def load_table(pathname: str):
+        def load_table(pathname: str, _):
             obj = LoadTableCallback(pathname)
             return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
 
@@ -90,6 +91,7 @@ class Banana(Dash):
 
         @self.callback(
             Output("banana--insert-modal", "opened"),
+            Output("banana--refresh-table", "data"),
             Input("banana--insert-confirm", "n_clicks"),
             Input("banana--insert-cancel", "n_clicks"),
             State("banana--location", "pathname"),
@@ -102,4 +104,4 @@ class Banana(Dash):
 
             obj = InsertRow(pathname, ctx.states_list[1])
             obj.insert()
-            return False
+            return False, int(time())
