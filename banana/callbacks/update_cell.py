@@ -1,3 +1,6 @@
+from dash import set_props
+from dash_mantine_components import Notification
+from dash_iconify import DashIconify
 from sqlalchemy import MetaData, Table, select, update
 
 from ..log import log_update
@@ -52,21 +55,37 @@ class UpdateCellCallback:
                 rows = result.fetchall()
                 self.new_value = rows[0][0]
 
-        with db.engine.connect() as conn:
-            query = (
-                update(table_data)
-                .where(table_data.c[self.banana_table.primary_key.name] == self.row_id)
-                .values({self.col_id: self.new_value})
+        try:
+            with db.engine.connect() as conn:
+                query = (
+                    update(table_data)
+                    .where(
+                        table_data.c[self.banana_table.primary_key.name] == self.row_id
+                    )
+                    .values({self.col_id: self.new_value})
+                )
+                conn.execute(query)
+                conn.commit()
+                log_update(
+                    user_name=config.connection.username,
+                    group_name=self.group,
+                    table_name=self.banana_table.name,
+                    schema_name=self.banana_table.schema_name,
+                    column_name=self.col_id,
+                    row_id=self.row_id,
+                    old_value=self.old_value,
+                    new_value=self.new_value,
+                )
+
+        except Exception as e:
+            notify = Notification(
+                title="Error updating cell",
+                action="show",
+                message=str(e.orig),
+                icon=DashIconify(icon="maki:cross"),
+                color="red",
+                autoClose=False,
+                withBorder=True,
+                radius="md",
             )
-            conn.execute(query)
-            conn.commit()
-            log_update(
-                user_name=config.connection.username,
-                group_name=self.group,
-                table_name=self.banana_table.name,
-                schema_name=self.banana_table.schema_name,
-                column_name=self.col_id,
-                row_id=self.row_id,
-                old_value=self.old_value,
-                new_value=self.new_value,
-            )
+            set_props("banana--notification", {"children": notify})

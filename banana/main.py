@@ -1,8 +1,8 @@
 from importlib import resources
-from time import time
 
-from dash import Dash, Input, Output, State, ctx, ALL, _dash_renderer
+from dash import Dash, Input, Output, State, _dash_renderer, ctx, no_update, ALL
 from dash.exceptions import PreventUpdate
+from dash_mantine_components import styles
 
 from .callbacks import (
     InitApp,
@@ -32,6 +32,7 @@ class Banana(Dash):
             server=server,
             assets_folder=resources.files("banana") / "assets",
             title=config.title,
+            external_stylesheets=[styles.NOTIFICATIONS],
         )
         self.layout = Layout()
 
@@ -100,8 +101,7 @@ class Banana(Dash):
         )
         def insert_row(_confirm, _cancel, pathname, _fields):
             if ctx.triggered_id == "banana--insert-cancel":
-                return False
+                return False, no_update
 
             obj = InsertRow(pathname, ctx.states_list[1])
-            obj.insert()
-            return False, int(time())
+            return obj.exec()

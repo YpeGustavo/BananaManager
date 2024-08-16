@@ -13,6 +13,8 @@ class Layout(dmc.MantineProvider):
                 [
                     dcc.Location(id="banana--location", refresh=False),
                     dcc.Store(id="banana--refresh-table", data=0),
+                    dmc.NotificationProvider(position="bottom-center"),
+                    html.Div(id="banana--notification"),
                     self.insert_modal(),
                     self.left_section(),
                     self.right_section(),

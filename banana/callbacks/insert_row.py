@@ -1,5 +1,9 @@
 from json import dumps
+from time import time
 
+from dash import set_props, no_update
+from dash_iconify import DashIconify
+from dash_mantine_components import Notification
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
@@ -33,7 +37,7 @@ class InsertRow:
         except Exception as e:
             print(f"Error reflecting table: {e}")
 
-    def insert(self):
+    def exec(self):
         self.reflect_table()
         if self.table is not None:
             query = self.table.insert().values(**self.values)
@@ -48,8 +52,22 @@ class InsertRow:
                     schema_name=self.banana_table.schema_name,
                     new_values=dumps(self.values),
                 )
+                return False, int(time())
+
             except Exception as e:
                 session.rollback()
-                print(f"Error inserting row: {e}")
+                notify = Notification(
+                    title="Error inserting row",
+                    action="show",
+                    message=str(e.orig),
+                    icon=DashIconify(icon="maki:cross"),
+                    color="red",
+                    autoClose=False,
+                    withBorder=True,
+                    radius="md",
+                )
+                set_props("banana--notification", {"children": notify})
+                return no_update, no_update
+
             finally:
                 session.close()
