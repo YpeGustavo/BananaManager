@@ -1,5 +1,7 @@
 dash
 dash-ag-grid
+dash-iconify
+dash-mantine-components==0.14.4
 Flask-SQLAlchemy
 pydantic
 sqlalchemy
