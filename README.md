@@ -168,16 +168,16 @@ if __name__ == "__main__":
 
 ## Roadmap
 
-| Version  | Description                 | Release date               |
-|----------|-----------------------------|----------------------------|
-| **v0.1** | Load table and update cells | First half of July 2024    |
-| **v0.2** | Table groups                | Second half of July 2024   |
-| **v0.3** | Logging and configurations  | First half of August 2024  |
-| **v0.4** | Add and delete rows         | Second half of August 2024 |
-| **v0.5** | User authentication         | September 2024             |
-| **v0.6** | Special data types          | October 2024               |
-| **v0.7** | Advanced user authorization | First quarter of 2025      |
-| **v0.8** | Themes                      | 2025                       |
+| Version  | Description                  | Release date               |
+|----------|------------------------------|----------------------------|
+| **v0.1** | Load table and update cells  | First half of July 2024    |
+| **v0.2** | Table groups                 | Second half of July 2024   |
+| **v0.3** | Logging and configurations   | First half of August 2024  |
+| **v0.4** | Insert rows and color themes | Second half of August 2024 |
+| **v0.5** | Delete rows and history      | September 2024             |
+| **v0.6** | User authentication          | October 2024               |
+| **v0.7** | Special data types           | November 2024              |
+| **v0.8** | Advanced user authorization  | First quarter of 2025      |
 
 ## License
 
