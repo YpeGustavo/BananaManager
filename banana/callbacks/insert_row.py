@@ -14,8 +14,8 @@ from ..utils import split_pathname, config, db
 
 class InsertRow:
     def __init__(self, pathname, fields):
-        self.group, table = split_pathname(pathname)
-        self.banana_table = get_table_model(table, self.group)
+        self.group_name, table_name = split_pathname(pathname)
+        self.banana_table = get_table_model(self.group_name, table_name)
         self.values = self.get_values(fields)
         self.metadata = MetaData()
         self.table = None
@@ -47,7 +47,7 @@ class InsertRow:
                 session.commit()
                 log_insert(
                     user_name=config.connection.username,
-                    group_name=self.group,
+                    group_name=self.group_name,
                     table_name=self.banana_table.name,
                     schema_name=self.banana_table.schema_name,
                     new_values=dumps(self.values),

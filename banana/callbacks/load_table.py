@@ -94,7 +94,7 @@ class LoadTableCallback:
         if table_name is None:
             raise PreventUpdate
 
-        self.banana_table = get_table_model(table_name, group_name)
+        self.banana_table = get_table_model(group_name, table_name)
 
     def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:

@@ -76,7 +76,7 @@ class BananaGroup(BaseModel):
     display_order: Optional[int] = None
 
 
-def get_table_model(table_name: str, group_name: str) -> BananaTable:
+def get_table_model(group_name: str, table_name: str) -> BananaTable:
     json_dir = config.data_path.joinpath("models.json")
     with open(json_dir, "r") as f:
         models = json.load(f)

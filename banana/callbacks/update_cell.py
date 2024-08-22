@@ -18,8 +18,8 @@ class UpdateCellCallback:
         self.new_value = data[0]["value"]
 
         self.metadata = MetaData()
-        self.group, table_name = split_pathname(pathname)
-        self.banana_table = get_table_model(table_name, self.group)
+        self.group_name, table_name = split_pathname(pathname)
+        self.banana_table = get_table_model(self.group_name, table_name)
 
     def exec(self):
         table_data = Table(
@@ -68,7 +68,7 @@ class UpdateCellCallback:
                 conn.commit()
                 log_update(
                     user_name=config.connection.username,
-                    group_name=self.group,
+                    group_name=self.group_name,
                     table_name=self.banana_table.name,
                     schema_name=self.banana_table.schema_name,
                     column_name=self.col_id,

@@ -6,8 +6,8 @@ from ..utils import split_pathname
 
 class LoadForm:
     def __init__(self, pathname: str):
-        group, table = split_pathname(pathname)
-        banana_table = get_table_model(group, table)
+        group_name, table_name = split_pathname(pathname)
+        banana_table = get_table_model(group_name, table_name)
         self.fields = self.__get_fields_metadata(banana_table)
 
     def __get_fields_metadata(self, table: BananaTable):
