@@ -25,7 +25,17 @@ class Layout(dmc.MantineProvider):
 
     def left_section(self) -> html.Div:
         return dmc.Paper(
-            id="banana--menu",
+            children=[
+                html.Div(id="banana--menu"),
+                dmc.Button(
+                    "Refresh",
+                    id="banana--refresh-button",
+                    color=config.theme,
+                    radius="md",
+                    leftSection=DashIconify(icon="mingcute:refresh-3-fill", height=20),
+                    mt=20,
+                ),
+            ],
             className="left-section",
             bg=dmc.DEFAULT_THEME["colors"][config.theme][9],
         )
@@ -66,15 +76,6 @@ class Layout(dmc.MantineProvider):
                             radius="md",
                             leftSection=DashIconify(
                                 icon="mingcute:add-circle-fill", height=20
-                            ),
-                        ),
-                        dmc.Button(
-                            "Refresh",
-                            id="banana--refresh-button",
-                            color=config.theme,
-                            radius="md",
-                            leftSection=DashIconify(
-                                icon="mingcute:refresh-3-fill", height=20
                             ),
                         ),
                     ]
