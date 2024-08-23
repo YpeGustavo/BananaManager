@@ -45,6 +45,12 @@ body {
 .left-section::-webkit-scrollbar-thumb:hover {background: var(--color-dark);}
 .left-section::-webkit-scrollbar-track {background: transparent;}
 
+.left-section .mantine-Button-root {
+  flex-shrink: 0;
+  min-width: 100%;
+  box-sizing: border-box;
+}
+
 .right-section {
   flex-grow: 1;
   display: flex;
