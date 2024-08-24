@@ -63,6 +63,7 @@ class Layout(dmc.MantineProvider):
         return dmc.Group(
             [
                 dmc.Text(
+                    "No table selected",
                     id="banana--table-title",
                     className="table-title",
                     c=dmc.DEFAULT_THEME["colors"][config.theme][9],
