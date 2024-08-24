@@ -1,11 +1,8 @@
-from dash import set_props
-from dash_mantine_components import Notification
-from dash_iconify import DashIconify
 from sqlalchemy import MetaData, Table, select, update
 
 from ..log import log_update
 from ..models import get_table_model
-from ..utils import config, db, split_pathname
+from ..utils import raise_error, split_pathname, config, db
 
 
 class UpdateCellCallback:
@@ -78,14 +75,4 @@ class UpdateCellCallback:
                 )
 
         except Exception as e:
-            notify = Notification(
-                title="Error updating cell",
-                action="show",
-                message=str(e.orig),
-                icon=DashIconify(icon="maki:cross"),
-                color="red",
-                autoClose=False,
-                withBorder=True,
-                radius="md",
-            )
-            set_props("banana--notification", {"children": notify})
+            raise_error("Error updating cell", str(e.orig))

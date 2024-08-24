@@ -1,15 +1,13 @@
 from json import dumps
 from time import time
 
-from dash import set_props, no_update
-from dash_iconify import DashIconify
-from dash_mantine_components import Notification
+from dash import no_update
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
 from ..log import log_insert
 from ..models import get_table_model
-from ..utils import split_pathname, config, db
+from ..utils import raise_error, split_pathname, config, db
 
 
 class InsertRow:
@@ -56,17 +54,7 @@ class InsertRow:
 
             except Exception as e:
                 session.rollback()
-                notify = Notification(
-                    title="Error inserting row",
-                    action="show",
-                    message=str(e.orig),
-                    icon=DashIconify(icon="maki:cross"),
-                    color="red",
-                    autoClose=False,
-                    withBorder=True,
-                    radius="md",
-                )
-                set_props("banana--notification", {"children": notify})
+                raise_error("Error inserting row", str(e.orig))
                 return no_update, no_update
 
             finally:

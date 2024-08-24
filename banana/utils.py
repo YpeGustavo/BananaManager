@@ -3,6 +3,8 @@ from logging.handlers import RotatingFileHandler
 from os import environ
 from typing import Any, Optional
 
+from dash import set_props
+from dash_mantine_components import Notification
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from pydantic import BaseModel, DirectoryPath, PositiveInt, field_validator, Field
@@ -113,10 +115,23 @@ def read_sql(query):
     return rows
 
 
+def raise_error(title: str, message):
+    notify = Notification(
+        title=title,
+        action="show",
+        message=message,
+        color="red",
+        autoClose=False,
+        withBorder=True,
+        radius="md",
+    )
+    set_props("banana--notification", {"children": notify})
+
+
 def split_pathname(pathname: str) -> tuple[str]:
     try:
-        _, group, table = pathname.split("/")
+        _, group_name, table_name = pathname.split("/")
     except ValueError:
-        group = None
-        table = None
-    return group, table
+        group_name = None
+        table_name = None
+    return group_name, table_name
