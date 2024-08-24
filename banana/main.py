@@ -1,8 +1,18 @@
 from importlib import resources
 
-from dash import Dash, Input, Output, State, _dash_renderer, ctx, no_update, ALL
+from dash import (
+    Dash,
+    Input,
+    Output,
+    State,
+    _dash_renderer,
+    ctx,
+    no_update,
+    ALL,
+)
 from dash.exceptions import PreventUpdate
 from dash_mantine_components import styles
+from pydantic import ValidationError
 
 from .callbacks import (
     InitApp,
@@ -13,7 +23,7 @@ from .callbacks import (
     UpdateCellCallback,
 )
 from .layout import Layout
-from .utils import config, server
+from .utils import raise_error, config, server
 
 
 _dash_renderer._set_react_version("18.2.0")
@@ -43,7 +53,11 @@ class Banana(Dash):
         )
         def load_menu(pathname: str, _):
             if ctx.triggered_id == "banana--refresh-button":
-                refresh()
+                try:
+                    refresh()
+                except Exception as e:
+                    raise_error("Error on refreshing table configuration", str(e))
+
             obj = LoadMenuCallback(pathname)
             return obj.menu
 
