@@ -33,6 +33,7 @@ class Layout(dmc.MantineProvider):
                     color=config.theme,
                     radius="md",
                     leftSection=DashIconify(icon="mingcute:refresh-3-fill", height=20),
+                    variant="light",
                     mt=20,
                 ),
             ],
