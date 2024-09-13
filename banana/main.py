@@ -12,7 +12,6 @@ from dash import (
 )
 from dash.exceptions import PreventUpdate
 from dash_mantine_components import styles
-from pydantic import ValidationError
 
 from .callbacks import (
     InitApp,
@@ -72,9 +71,7 @@ class Banana(Dash):
             return f"/{ctx.triggered_id['group']}/{ctx.triggered_id['table']}"
 
         @self.callback(
-            Output("banana--table", "columnDefs"),
-            Output("banana--table", "rowData"),
-            Output("banana--table", "getRowId"),
+            Output("banana--table", "children"),
             Output("banana--table-title", "children"),
             Input("banana--location", "pathname"),
             Input("banana--refresh-table", "data"),
@@ -82,7 +79,7 @@ class Banana(Dash):
         )
         def load_table(pathname: str, _):
             obj = LoadTableCallback(pathname)
-            return obj.column_defs, obj.row_data, obj.row_id, obj.table_title
+            return obj.ag_grid, obj.table_title
 
         @self.callback(
             Input("banana--table", "cellValueChanged"),

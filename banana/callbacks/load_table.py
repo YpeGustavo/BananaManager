@@ -1,8 +1,9 @@
 from dash.exceptions import PreventUpdate
+from dash_ag_grid import AgGrid
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
 from ..models import BananaColumn, BananaTable, get_table_model
-from ..utils import read_sql, split_pathname, db
+from ..utils import read_sql, split_pathname, config, db
 
 
 class SqlAlchemyStatement:
@@ -136,8 +137,7 @@ class LoadTableCallback:
                 "cellEditorParams": {"values": [row[0] for row in rows]},
             }
 
-    @property
-    def column_defs(self) -> list[dict]:
+    def __column_defs(self) -> list[dict]:
         id_col = [
             {
                 "headerName": self.banana_table.primary_key.display_name,
@@ -152,8 +152,7 @@ class LoadTableCallback:
         values_cols = [self.__get_columns_def(col) for col in self.banana_table.columns]
         return id_col + values_cols
 
-    @property
-    def row_data(self):
+    def __row_data(self):
         sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
         rows = read_sql(sqlalchemy_table.query)
 
@@ -167,10 +166,19 @@ class LoadTableCallback:
 
         return row_data
 
-    @property
-    def row_id(self) -> str:
+    def __row_id(self) -> str:
         return f"params.data.{self.banana_table.primary_key.name}"
 
     @property
     def table_title(self) -> str:
         return self.banana_table.display_name
+
+    @property
+    def ag_grid(self):
+        return AgGrid(
+            rowData=self.__row_data(),
+            columnDefs=self.__column_defs(),
+            getRowId=self.__row_id(),
+            dashGridOptions=config.grid_options,
+            style={"height": "calc(100vh - 85px)", "overflow": "auto"},
+        )
