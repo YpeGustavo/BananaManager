@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, model_validator, PositiveInt
 
@@ -62,11 +62,15 @@ class BananaTable(BaseModel):
     columns: Optional[list[BananaColumn]] = None
     order_by: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
+    grid_options: dict[str, Any] = {}
 
     @model_validator(mode="after")
     def validate_model(self):
         if self.display_name is None:
             self.display_name = self.name
+
+        self.grid_options = {**config.default_grid_options, **self.grid_options}
+
         return self
 
 

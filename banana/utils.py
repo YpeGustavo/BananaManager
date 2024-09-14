@@ -40,7 +40,7 @@ class Config(BaseModel):
     table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
     theme: str = "cyan"
-    grid_options: dict[str, Any] = {}
+    default_grid_options: dict[str, Any] = {}
 
     @field_validator("data_path")
     def _validate_date_path(value):

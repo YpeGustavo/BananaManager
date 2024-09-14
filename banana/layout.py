@@ -45,7 +45,7 @@ class Layout(dmc.MantineProvider):
             html.Div(
                 [
                     self.right_section_header(),
-                    html.Div(id="banana--table"),
+                    html.Div(id="banana--table-place"),
                 ],
                 className="content",
             ),

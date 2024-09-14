@@ -42,6 +42,7 @@ class Banana(Dash):
             assets_folder=resources.files("banana") / "assets",
             title=config.title,
             external_stylesheets=[styles.NOTIFICATIONS],
+            suppress_callback_exceptions=True,
         )
         self.layout = Layout()
 
@@ -71,7 +72,7 @@ class Banana(Dash):
             return f"/{ctx.triggered_id['group']}/{ctx.triggered_id['table']}"
 
         @self.callback(
-            Output("banana--table", "children"),
+            Output("banana--table-place", "children"),
             Output("banana--table-title", "children"),
             Input("banana--location", "pathname"),
             Input("banana--refresh-table", "data"),
