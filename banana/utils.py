@@ -41,7 +41,7 @@ class Config(BaseModel):
     title: str = "Banana Database Manager"
     theme: str = "cyan"
     defaultColDef: dict[str, Any] = Field(default_factory=dict, validate_default=True)
-    default_grid_options: dict[str, Any] = {}
+    defaultGridOptions: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("data_path")
     def _validate_date_path(value):

@@ -172,6 +172,6 @@ class LoadTableCallback:
             columnDefs=self.__columnDefs(),
             getRowId=self.__row_id(),
             defaultColDef=self.banana_table.defaultColDef,
-            dashGridOptions=self.banana_table.grid_options,
+            dashGridOptions=self.banana_table.gridOptions,
             style={"height": "calc(100vh - 85px)", "overflow": "auto"},
         )

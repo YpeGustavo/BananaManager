@@ -59,7 +59,7 @@ class BananaTable(BaseModel):
     order_by: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
     defaultColDef: dict[str, Any] = Field(default_factory=dict)
-    grid_options: dict[str, Any] = {}
+    gridOptions: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -70,9 +70,9 @@ class BananaTable(BaseModel):
             **config.defaultColDef,
             **self.defaultColDef,
         }
-        self.grid_options = {
-            **config.default_grid_options,
-            **self.grid_options,
+        self.gridOptions = {
+            **config.defaultGridOptions,
+            **self.gridOptions,
         }
 
         return self
