@@ -10,7 +10,7 @@ class Layout(dmc.MantineProvider):
         super().__init__(
             html.Div(
                 [
-                    dcc.Location(id="banana--location", refresh=False),
+                    dcc.Location(id="banana--location", refresh=True),
                     dcc.Store(id="banana--refresh-table", data=0),
                     dmc.NotificationProvider(position="bottom-center"),
                     html.Div(id="banana--notification"),
