@@ -10,7 +10,7 @@ class LoadMenuCallback:
         self.selected_group, self.selected_table = split_pathname(pathname)
 
     def _get_models(self) -> list[tuple]:
-        json_dir = config.data_path.joinpath("models.json")
+        json_dir = config.dataPath.joinpath("models.json")
         with open(json_dir, "r") as f:
             models = json.load(f)
 

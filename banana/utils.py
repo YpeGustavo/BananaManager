@@ -35,15 +35,15 @@ class Connection(BaseModel):
 
 class Config(BaseModel):
     connection: Connection
-    data_path: str = DirectoryPath("data")
+    dataPath: str = DirectoryPath("data")
     port: PositiveInt = 4000
-    table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
+    tablePaths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
     theme: str = "cyan"
     defaultColDef: dict[str, Any] = Field(default_factory=dict, validate_default=True)
     defaultGridOptions: dict[str, Any] = Field(default_factory=dict)
 
-    @field_validator("data_path")
+    @field_validator("dataPath")
     def _validate_date_path(value):
         return DirectoryPath(value)
 
@@ -82,7 +82,7 @@ def __get_config() -> Config:
 
 def __get_logger(config: Config) -> logging.Logger:
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-    errorlog_path = config.data_path.joinpath("error.log")
+    errorlog_path = config.dataPath.joinpath("error.log")
 
     handler = RotatingFileHandler(errorlog_path, maxBytes=10000, backupCount=1)
     handler.setLevel(logging.ERROR)

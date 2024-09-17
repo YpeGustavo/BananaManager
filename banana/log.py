@@ -45,7 +45,7 @@ class Update(Base):
     new_value = Column(String)
 
 
-db_dir = config.data_path.joinpath("log.db")
+db_dir = config.dataPath.joinpath("log.db")
 engine = create_engine(f"sqlite:///{db_dir}")
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)

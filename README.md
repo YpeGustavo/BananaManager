@@ -51,16 +51,16 @@ connection:
   host: <optional str>
   port: <optional str>
   database: <optional str>
-data_path: "data"
-table_paths: ["tables"]
+dataPath: "data"
+tablePaths: ["tables"]
 title: "Banana Database Manager"
 theme: <optional str>
 gridOptions: <optional dict>
 ```
 
 - **connection** *(dict)* : This will create a [SQLAlchemy URL](https://docs.sqlalchemy.org/en/20/core/engines.html#sqlalchemy.engine.URL) object. See the section [Dialets](https://docs.sqlalchemy.org/en/20/dialects/) for more information about the appropriate driver.
-- **data_path** *(str, default="data")* : The folder where the app data files will be stored.
-- **table_paths** *(list[str], default=["tables"])* : List of folder where the table models YAML files are stored.
+- **dataPath** *(str, default="data")* : The folder where the app data files will be stored.
+- **tablePaths** *(list[str], default=["tables"])* : List of folder where the table models YAML files are stored.
 - **title** *(str, default="Banana Database Manager")* : HTML header title attribute.
 - **theme** *(str, default="cyan")* : One of the [default Mantine colors](https://mantine.dev/theming/colors/#default-colors).
 - **gridOptions** *(dict[str, str])* : Check [AG Grid Options](https://www.ag-grid.com/react-data-grid/grid-options/) documentation.

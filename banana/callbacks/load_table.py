@@ -97,7 +97,7 @@ class LoadTableCallback:
 
         self.banana_table = get_table_model(group_name, table_name)
 
-    def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
+    def __get_columnDef(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:
             col_def = {"headerName": column.display_name, "field": column.name}
             col_def.update(column.columnDef)
@@ -141,10 +141,10 @@ class LoadTableCallback:
         }
         id_col.update(self.banana_table.primary_key.columnDef)
 
-        values_cols = [self.__get_columns_def(col) for col in self.banana_table.columns]
+        values_cols = [self.__get_columnDef(col) for col in self.banana_table.columns]
         return [id_col] + values_cols
 
-    def __row_data(self):
+    def __rowData(self):
         sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
         rows = read_sql(sqlalchemy_table.query)
 
@@ -158,7 +158,7 @@ class LoadTableCallback:
 
         return row_data
 
-    def __row_id(self) -> str:
+    def __rowId(self) -> str:
         return f"params.data.{self.banana_table.primary_key.name}"
 
     @property
@@ -168,9 +168,9 @@ class LoadTableCallback:
     @property
     def ag_grid(self):
         return AgGrid(
-            rowData=self.__row_data(),
+            rowData=self.__rowData(),
             columnDefs=self.__columnDefs(),
-            getRowId=self.__row_id(),
+            getRowId=self.__rowId(),
             defaultColDef=self.banana_table.defaultColDef,
             dashGridOptions=self.banana_table.gridOptions,
             style={"height": "calc(100vh - 85px)", "overflow": "auto"},

@@ -85,7 +85,7 @@ class BananaGroup(BaseModel):
 
 
 def get_table_model(group_name: str, table_name: str) -> BananaTable:
-    json_dir = config.data_path.joinpath("models.json")
+    json_dir = config.dataPath.joinpath("models.json")
     with open(json_dir, "r") as f:
         models = json.load(f)
         table = BananaTable(**models[group_name]["tables"][table_name])

@@ -61,17 +61,17 @@ class InitApp:
                     )
 
     def _create_data_folder(self) -> None:
-        config.data_path.mkdir(parents=True, exist_ok=True)
+        config.dataPath.mkdir(parents=True, exist_ok=True)
 
     def _create_models_manifest(self) -> None:
         models = self._read_models()
-        with open(config.data_path.joinpath("models.json"), "w") as f:
+        with open(config.dataPath.joinpath("models.json"), "w") as f:
             json.dump(models, f)
 
     def _read_models(self) -> dict[str, dict]:
         # Read every folder
         models = dict()
-        for table_path in config.table_paths:
+        for table_path in config.tablePaths:
             for suffix in ("*.yaml", "*.yml"):
 
                 # Read every group
