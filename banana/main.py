@@ -72,7 +72,11 @@ class Banana(Dash):
             return f"/{ctx.triggered_id['group']}/{ctx.triggered_id['table']}"
 
         @self.callback(
-            Output("banana--table-place", "children"),
+            Output("banana--table", "columnDefs"),
+            Output("banana--table", "rowData"),
+            Output("banana--table", "getRowId"),
+            Output("banana--table", "defaultColDef"),
+            Output("banana--table", "dashGridOptions"),
             Output("banana--table-title", "children"),
             Input("banana--location", "pathname"),
             Input("banana--refresh-table", "data"),
@@ -80,7 +84,14 @@ class Banana(Dash):
         )
         def load_table(pathname: str, _):
             obj = LoadTableCallback(pathname)
-            return obj.ag_grid, obj.table_title
+            return (
+                obj.columnDefs,
+                obj.rowData,
+                obj.rowId,
+                obj.defaultColDef,
+                obj.gridOptions,
+                obj.tableTitle,
+            )
 
         @self.callback(
             Input("banana--table", "cellValueChanged"),

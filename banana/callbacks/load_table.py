@@ -1,5 +1,4 @@
 from dash.exceptions import PreventUpdate
-from dash_ag_grid import AgGrid
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
 from ..models import BananaColumn, BananaTable, get_table_model
@@ -133,7 +132,8 @@ class LoadTableCallback:
             col_def.update(column.columnDef)
             return col_def
 
-    def __columnDefs(self) -> list[dict]:
+    @property
+    def columnDefs(self) -> list[dict]:
         id_col = {
             "headerName": self.banana_table.primary_key.display_name,
             "field": self.banana_table.primary_key.name,
@@ -144,7 +144,8 @@ class LoadTableCallback:
         values_cols = [self.__get_columnDef(col) for col in self.banana_table.columns]
         return [id_col] + values_cols
 
-    def __rowData(self):
+    @property
+    def rowData(self):
         sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
         rows = read_sql(sqlalchemy_table.query)
 
@@ -158,20 +159,18 @@ class LoadTableCallback:
 
         return row_data
 
-    def __rowId(self) -> str:
+    @property
+    def rowId(self) -> str:
         return f"params.data.{self.banana_table.primary_key.name}"
 
     @property
-    def table_title(self) -> str:
+    def tableTitle(self) -> str:
         return self.banana_table.display_name
 
     @property
-    def ag_grid(self):
-        return AgGrid(
-            rowData=self.__rowData(),
-            columnDefs=self.__columnDefs(),
-            getRowId=self.__rowId(),
-            defaultColDef=self.banana_table.defaultColDef,
-            dashGridOptions=self.banana_table.gridOptions,
-            style={"height": "calc(100vh - 85px)", "overflow": "auto"},
-        )
+    def defaultColDef(self):
+        return self.banana_table.defaultColDef
+
+    @property
+    def gridOptions(self):
+        return self.banana_table.gridOptions

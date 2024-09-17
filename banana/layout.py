@@ -1,4 +1,5 @@
 from dash import dcc, html
+from dash_ag_grid import AgGrid
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
@@ -45,7 +46,10 @@ class Layout(dmc.MantineProvider):
             html.Div(
                 [
                     self.right_section_header(),
-                    html.Div(id="banana--table-place"),
+                    AgGrid(
+                        id="banana--table",
+                        style={"height": "calc(100vh - 85px)", "overflow": "auto"},
+                    ),
                 ],
                 className="content",
             ),
