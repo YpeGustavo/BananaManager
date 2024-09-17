@@ -7,7 +7,7 @@ from dash import set_props
 from dash_mantine_components import Notification
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from pydantic import BaseModel, DirectoryPath, PositiveInt, field_validator, Field
+from pydantic import BaseModel, DirectoryPath, PositiveInt, Field, field_validator
 from sqlalchemy.engine.url import URL
 import yaml
 
@@ -40,11 +40,17 @@ class Config(BaseModel):
     table_paths: list[DirectoryPath] = [DirectoryPath("tables")]
     title: str = "Banana Database Manager"
     theme: str = "cyan"
+    defaultColDef: dict[str, Any] = Field(default_factory=dict, validate_default=True)
     default_grid_options: dict[str, Any] = {}
 
     @field_validator("data_path")
     def _validate_date_path(value):
         return DirectoryPath(value)
+
+    @field_validator("defaultColDef")
+    def _validate_defaultColDef(value):
+        default = {"editable": True, "filter": True, "sortable": True}
+        return {**default, **value}
 
     @property
     def connection_string(self) -> str:

@@ -1,7 +1,7 @@
 import json
 from typing import Any, Optional
 
-from pydantic import BaseModel, model_validator, PositiveInt
+from pydantic import BaseModel, Field, model_validator, PositiveInt
 
 from .utils import config
 
@@ -28,9 +28,7 @@ class BananaForeignKey(BaseModel):
 class BananaPrimaryKey(BaseModel):
     name: str
     display_name: Optional[str] = None
-    hide: bool = False
-    filter: bool = True
-    sortable: bool = True
+    columnDef: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -43,9 +41,7 @@ class BananaColumn(BaseModel):
     name: str
     display_name: Optional[str] = None
     foreign_key: Optional[BananaForeignKey] = None
-    editable: bool = True
-    filter: bool = True
-    sortable: bool = True
+    columnDef: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -62,6 +58,7 @@ class BananaTable(BaseModel):
     columns: Optional[list[BananaColumn]] = None
     order_by: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
+    defaultColDef: dict[str, Any] = Field(default_factory=dict)
     grid_options: dict[str, Any] = {}
 
     @model_validator(mode="after")
@@ -69,7 +66,14 @@ class BananaTable(BaseModel):
         if self.display_name is None:
             self.display_name = self.name
 
-        self.grid_options = {**config.default_grid_options, **self.grid_options}
+        self.defaultColDef = {
+            **config.defaultColDef,
+            **self.defaultColDef,
+        }
+        self.grid_options = {
+            **config.default_grid_options,
+            **self.grid_options,
+        }
 
         return self
 

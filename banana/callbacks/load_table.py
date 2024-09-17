@@ -3,7 +3,7 @@ from dash_ag_grid import AgGrid
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
 from ..models import BananaColumn, BananaTable, get_table_model
-from ..utils import read_sql, split_pathname, config, db
+from ..utils import read_sql, split_pathname, db
 
 
 class SqlAlchemyStatement:
@@ -99,13 +99,9 @@ class LoadTableCallback:
 
     def __get_columns_def(self, column: BananaColumn) -> dict[str, str]:
         if column.foreign_key is None:
-            return {
-                "headerName": column.display_name,
-                "field": column.name,
-                "editable": column.editable,
-                "filter": column.filter,
-                "sortable": column.sortable,
-            }
+            col_def = {"headerName": column.display_name, "field": column.name}
+            col_def.update(column.columnDef)
+            return col_def
 
         else:
             metadata = MetaData()
@@ -128,29 +124,25 @@ class LoadTableCallback:
                     query = query.order_by(orderby)
 
             rows = read_sql(query)
-
-            return {
+            col_def = {
                 "headerName": column.display_name,
                 "field": column.name,
-                "editable": True,
                 "cellEditor": "agSelectCellEditor",
                 "cellEditorParams": {"values": [row[0] for row in rows]},
             }
+            col_def.update(column.columnDef)
+            return col_def
 
-    def __column_defs(self) -> list[dict]:
-        id_col = [
-            {
-                "headerName": self.banana_table.primary_key.display_name,
-                "field": self.banana_table.primary_key.name,
-                "editable": False,
-                "filter": self.banana_table.primary_key.filter,
-                "hide": self.banana_table.primary_key.hide,
-                "sortable": self.banana_table.primary_key.sortable,
-            },
-        ]
+    def __columnDefs(self) -> list[dict]:
+        id_col = {
+            "headerName": self.banana_table.primary_key.display_name,
+            "field": self.banana_table.primary_key.name,
+            "editable": False,
+        }
+        id_col.update(self.banana_table.primary_key.columnDef)
 
         values_cols = [self.__get_columns_def(col) for col in self.banana_table.columns]
-        return id_col + values_cols
+        return [id_col] + values_cols
 
     def __row_data(self):
         sqlalchemy_table = SqlAlchemyStatement(self.banana_table)
@@ -177,8 +169,9 @@ class LoadTableCallback:
     def ag_grid(self):
         return AgGrid(
             rowData=self.__row_data(),
-            columnDefs=self.__column_defs(),
+            columnDefs=self.__columnDefs(),
             getRowId=self.__row_id(),
+            defaultColDef=self.banana_table.defaultColDef,
             dashGridOptions=self.banana_table.grid_options,
             style={"height": "calc(100vh - 85px)", "overflow": "auto"},
         )
