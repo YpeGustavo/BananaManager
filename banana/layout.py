@@ -15,6 +15,7 @@ class Layout(dmc.MantineProvider):
                     dcc.Store(id="banana--refresh-table", data=0),
                     dmc.NotificationProvider(position="bottom-center"),
                     html.Div(id="banana--notification"),
+                    self.history_modal(),
                     self.insert_modal(),
                     self.left_section(),
                     self.right_section(),
@@ -76,6 +77,15 @@ class Layout(dmc.MantineProvider):
                                 icon="mingcute:add-circle-fill", height=20
                             ),
                         ),
+                        dmc.Button(
+                            "History",
+                            id="banana--history-button",
+                            color="dark",
+                            radius="md",
+                            leftSection=DashIconify(
+                                icon="mingcute:history-anticlockwise-fill", height=20
+                            ),
+                        ),
                     ]
                 ),
             ],
@@ -116,4 +126,12 @@ class Layout(dmc.MantineProvider):
             ],
             id="banana--insert-modal",
             opened=False,
+        )
+
+    def history_modal(self) -> dmc.Modal:
+        return dmc.Modal(
+            title="Change log",
+            id="banana--history-modal",
+            size="xl",
+            radius="md",
         )

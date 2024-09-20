@@ -17,6 +17,7 @@ from .callbacks import (
     InitApp,
     InsertRow,
     LoadForm,
+    LoadHistoryCallback,
     LoadMenuCallback,
     LoadTableCallback,
     UpdateCellCallback,
@@ -109,9 +110,20 @@ class Banana(Dash):
             State("banana--location", "pathname"),
             prevent_initial_call=True,
         )
-        def open_modal(_, pathname: str):
+        def open_insert_modal(_, pathname: str):
             obj = LoadForm(pathname)
             return True, obj.form
+
+        @self.callback(
+            Output("banana--history-modal", "opened"),
+            Output("banana--history-modal", "children"),
+            Input("banana--history-button", "n_clicks"),
+            State("banana--location", "pathname"),
+            prevent_initial_call=True,
+        )
+        def open_history_modal(_, pathname: str):
+            obj = LoadHistoryCallback(pathname)
+            return True, obj.rows
 
         @self.callback(
             Output("banana--insert-modal", "opened"),

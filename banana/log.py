@@ -105,3 +105,13 @@ def log_update(
         log_type=LogType.UPDATE,
         log_index=update_id,
     )
+
+
+def read_history():
+    from sqlalchemy import select, text
+
+    with engine.connect() as conn:
+        query = select("*").select_from(text("log_index"))
+        result = conn.execute(query)
+        rows = result.fetchall()
+    return rows
