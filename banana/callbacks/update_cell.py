@@ -1,6 +1,6 @@
 from sqlalchemy import MetaData, Table, select, update
 
-from ..log import log_update
+from ..history import LogType, post_history
 from ..models import get_table_model
 from ..utils import raise_error, split_pathname, config, db
 
@@ -63,15 +63,18 @@ class UpdateCellCallback:
                 )
                 conn.execute(query)
                 conn.commit()
-                log_update(
-                    user_name=config.connection.username,
+                post_history(
+                    log_type=LogType.UPDATE,
                     group_name=self.group_name,
                     table_name=self.banana_table.name,
                     schema_name=self.banana_table.schema_name,
-                    column_name=self.col_id,
-                    row_id=self.row_id,
-                    old_value=self.old_value,
-                    new_value=self.new_value,
+                    user_name=config.connection.username,
+                    log_data={
+                        "column_name": self.col_id,
+                        "row_id": self.row_id,
+                        "old_value": self.old_value,
+                        "new_value": self.new_value,
+                    },
                 )
 
         except Exception as e:

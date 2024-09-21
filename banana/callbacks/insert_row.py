@@ -5,7 +5,7 @@ from dash import no_update
 from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
-from ..log import log_insert
+from ..history import LogType, post_history
 from ..models import get_table_model
 from ..utils import raise_error, split_pathname, config, db
 
@@ -43,12 +43,13 @@ class InsertRow:
             try:
                 session.execute(query)
                 session.commit()
-                log_insert(
-                    user_name=config.connection.username,
+                post_history(
+                    log_type=LogType.INSERT,
                     group_name=self.group_name,
                     table_name=self.banana_table.name,
                     schema_name=self.banana_table.schema_name,
-                    new_values=dumps(self.values),
+                    user_name=config.connection.username,
+                    log_data=self.values,
                 )
                 return False, int(time())
 
