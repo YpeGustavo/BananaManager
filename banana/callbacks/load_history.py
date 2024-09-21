@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 
 from dash import html
@@ -18,8 +19,8 @@ def t(text) -> str:
 
 class LoadHistoryCallback:
     def __init__(self, pathname: str):
-        group_name, table_name = split_pathname(pathname)
-        banana_table = get_table_model(group_name, table_name)
+        self.group_name, table_name = split_pathname(pathname)
+        self.banana_table = get_table_model(self.group_name, table_name)
 
     def __text(self, upper, lower) -> dmc.Stack:
         return dmc.Stack(
@@ -42,8 +43,13 @@ class LoadHistoryCallback:
 
         return dmc.TableTd(dmc.Badge(event_type.value, color=color, variant="light"))
 
-    def __time(self, event_time) -> dmc.TableTd:
-        return dmc.TableTd(self.__text(event_time[:10], event_time[11:19]))
+    def __time(self, event_time: datetime) -> dmc.TableTd:
+        return dmc.TableTd(
+            self.__text(
+                event_time.strftime("%Y-%m-%d"),
+                event_time.strftime("%H:%M:%S"),
+            )
+        )
 
     def __user(self, event_user) -> dmc.TableTd:
         return dmc.TableTd(event_user)
@@ -82,15 +88,17 @@ class LoadHistoryCallback:
         )
 
     def render_event(self, event) -> dmc.Group:
-        event_type = LogType(event[2])
-        event_values = json.loads(event[7])
+        logtype = event[0]
+        loguser = event[1]
+        logtime = event[2]
+        logvalues = json.loads(event[3])
 
         data = [
-            self.__badge(event_type),
-            self.__user(event[6]),
-            self.__time(event[1]),
-            self.__row_id(event_values),
-            self.__values(event_values, event_type),
+            self.__badge(logtype),
+            self.__user(loguser),
+            self.__time(logtime),
+            self.__row_id(logvalues),
+            self.__values(logvalues, logtype),
             self.__undo_button(),
         ]
 
@@ -98,7 +106,12 @@ class LoadHistoryCallback:
 
     @property
     def rows(self):
-        history = get_history()
+        history = get_history(
+            group_name=self.group_name,
+            table_name=self.banana_table.name,
+            schema_name=self.banana_table.schema_name,
+        )
+
         return dmc.Table(
             [
                 dmc.TableThead(

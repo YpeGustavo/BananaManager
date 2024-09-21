@@ -11,9 +11,9 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+    and_,
     create_engine,
     select,
-    text,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -50,11 +50,34 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 
 
-def get_history():
+@validate_call
+def get_history(group_name: str, table_name: str, schema_name: Optional[str]):
+    query = (
+        select(
+            History.log_type,
+            History.user_name,
+            History.log_time,
+            History.log_data,
+        )
+        .where(
+            and_(
+                History.group_name == group_name,
+                History.table_name == table_name,
+                History.undone == 0,
+            )
+        )
+        .order_by(History.id.desc())
+    )
+
+    if schema_name is not None:
+        query = query.where(History.schema_name == schema_name)
+    else:
+        query = query.where(History.schema_name.is_(None))
+
     with engine.connect() as conn:
-        query = select("*").select_from(text("history"))
         result = conn.execute(query)
         rows = result.fetchall()
+
     return rows
 
 
