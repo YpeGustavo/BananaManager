@@ -117,6 +117,12 @@ class LoadHistoryCallback:
             schema_name=self.banana_table.schema_name,
         )
 
+        if not history:
+            return dmc.Center(
+                html.B("No changes recorded yet."),
+                style={"height": 200},
+            )
+
         return dmc.Table(
             [
                 dmc.TableThead(
