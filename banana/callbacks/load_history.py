@@ -79,11 +79,16 @@ class LoadHistoryCallback:
 
     def __undo_button(self) -> dmc.TableTd:
         return dmc.TableTd(
-            dmc.ActionIcon(
-                DashIconify(icon="mingcute:back-2-fill", width=20),
-                size="lg",
-                color="red",
-                radius="md",
+            dmc.Tooltip(
+                label="Not implemented yet",
+                position="top",
+                withArrow=True,
+                children=dmc.ActionIcon(
+                    DashIconify(icon="mingcute:back-2-fill", width=20),
+                    size="lg",
+                    color="red",
+                    radius="md",
+                ),
             )
         )
 

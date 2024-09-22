@@ -63,6 +63,7 @@ class UpdateCellCallback:
                 )
                 conn.execute(query)
                 conn.commit()
+
                 post_history(
                     log_type=LogType.UPDATE,
                     group_name=self.group_name,

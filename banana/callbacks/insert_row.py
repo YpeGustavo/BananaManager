@@ -1,4 +1,3 @@
-from json import dumps
 from time import time
 
 from dash import no_update
