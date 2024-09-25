@@ -1,8 +1,8 @@
 from dash.exceptions import PreventUpdate
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
-from ..models import BananaColumn, BananaTable, get_table_model
-from ..utils import read_sql, split_pathname, db
+from ...models import BananaColumn, BananaTable, get_table_model
+from ...utils import read_sql, split_pathname, db
 
 
 class SqlAlchemyStatement:

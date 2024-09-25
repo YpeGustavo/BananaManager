@@ -2,7 +2,7 @@ import json
 
 import dash_mantine_components as dmc
 
-from ..utils import config, split_pathname
+from ...utils import config, split_pathname
 
 
 class LoadMenuCallback:

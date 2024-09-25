@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 
-from ..models import BananaTable, get_table_model
-from ..utils import split_pathname
+from ...models import BananaTable, get_table_model
+from ...utils import split_pathname
 
 
 class LoadForm:

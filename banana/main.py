@@ -48,82 +48,14 @@ class Banana(Dash):
         self.layout = Layout()
 
         @self.callback(
-            Output("banana--menu", "children"),
-            Input("banana--location", "pathname"),
-            Input("banana--refresh-button", "n_clicks"),
-        )
-        def load_menu(pathname: str, _):
-            if ctx.triggered_id == "banana--refresh-button":
-                try:
-                    refresh()
-                except Exception as e:
-                    raise_error("Error on refreshing table configuration", str(e))
-
-            obj = LoadMenuCallback(pathname)
-            return obj.menu
-
-        @self.callback(
             Output("banana--location", "pathname"),
             Input({"component": "menu-item", "group": ALL, "table": ALL}, "n_clicks"),
             prevent_initial_call=True,
         )
-        def change_pathname(_):
+        def change_path_name(_):
             if len(ctx.triggered) != 1:
                 raise PreventUpdate
             return f"/{ctx.triggered_id['group']}/{ctx.triggered_id['table']}"
-
-        @self.callback(
-            Output("banana--table", "columnDefs"),
-            Output("banana--table", "rowData"),
-            Output("banana--table", "getRowId"),
-            Output("banana--table", "defaultColDef"),
-            Output("banana--table", "dashGridOptions"),
-            Output("banana--table-title", "children"),
-            Input("banana--location", "pathname"),
-            Input("banana--refresh-table", "data"),
-            prevent_initial_call=True,
-        )
-        def load_table(pathname: str, _):
-            obj = LoadTableCallback(pathname)
-            return (
-                obj.columnDefs,
-                obj.rowData,
-                obj.rowId,
-                obj.defaultColDef,
-                obj.gridOptions,
-                obj.tableTitle,
-            )
-
-        @self.callback(
-            Input("banana--table", "cellValueChanged"),
-            State("banana--location", "pathname"),
-        )
-        def update_cell(_, pathname):
-            data = ctx.inputs["banana--table.cellValueChanged"]
-            obj = UpdateCellCallback(data, pathname)
-            obj.exec()
-
-        @self.callback(
-            Output("banana--insert-modal", "opened", allow_duplicate=True),
-            Output("banana--insert-form", "children"),
-            Input("banana--insert-button", "n_clicks"),
-            State("banana--location", "pathname"),
-            prevent_initial_call=True,
-        )
-        def open_insert_modal(_, pathname: str):
-            obj = LoadForm(pathname)
-            return True, obj.form
-
-        @self.callback(
-            Output("banana--history-modal", "opened"),
-            Output("banana--history-modal", "children"),
-            Input("banana--history-button", "n_clicks"),
-            State("banana--location", "pathname"),
-            prevent_initial_call=True,
-        )
-        def open_history_modal(_, pathname: str):
-            obj = LoadHistoryCallback(pathname)
-            return True, obj.rows
 
         @self.callback(
             Output("banana--insert-modal", "opened"),
@@ -140,3 +72,71 @@ class Banana(Dash):
 
             obj = InsertRow(pathname, ctx.states_list[1])
             return obj.exec()
+
+        @self.callback(
+            Output("banana--table", "columnDefs"),
+            Output("banana--table", "rowData"),
+            Output("banana--table", "getRowId"),
+            Output("banana--table", "defaultColDef"),
+            Output("banana--table", "dashGridOptions"),
+            Output("banana--table-title", "children"),
+            Input("banana--location", "pathname"),
+            Input("banana--refresh-table", "data"),
+            prevent_initial_call=True,
+        )
+        def load_main_table(pathname: str, _):
+            obj = LoadTableCallback(pathname)
+            return (
+                obj.columnDefs,
+                obj.rowData,
+                obj.rowId,
+                obj.defaultColDef,
+                obj.gridOptions,
+                obj.tableTitle,
+            )
+
+        @self.callback(
+            Output("banana--menu", "children"),
+            Input("banana--location", "pathname"),
+            Input("banana--refresh-button", "n_clicks"),
+        )
+        def load_side_menu(pathname: str, _):
+            if ctx.triggered_id == "banana--refresh-button":
+                try:
+                    refresh()
+                except Exception as e:
+                    raise_error("Error on refreshing table configuration", str(e))
+
+            obj = LoadMenuCallback(pathname)
+            return obj.menu
+
+        @self.callback(
+            Output("banana--history-modal", "opened"),
+            Output("banana--history-modal", "children"),
+            Input("banana--history-button", "n_clicks"),
+            State("banana--location", "pathname"),
+            prevent_initial_call=True,
+        )
+        def open_history_modal(_, pathname: str):
+            obj = LoadHistoryCallback(pathname)
+            return True, obj.rows
+
+        @self.callback(
+            Output("banana--insert-modal", "opened", allow_duplicate=True),
+            Output("banana--insert-form", "children"),
+            Input("banana--insert-button", "n_clicks"),
+            State("banana--location", "pathname"),
+            prevent_initial_call=True,
+        )
+        def open_insert_modal(_, pathname: str):
+            obj = LoadForm(pathname)
+            return True, obj.form
+
+        @self.callback(
+            Input("banana--table", "cellValueChanged"),
+            State("banana--location", "pathname"),
+        )
+        def update_cell(_, pathname):
+            data = ctx.inputs["banana--table.cellValueChanged"]
+            obj = UpdateCellCallback(data, pathname)
+            obj.exec()
