@@ -17,7 +17,7 @@ def t(text) -> str:
     return text
 
 
-class LoadHistoryCallback:
+class OpenHistoryModalCallback:
     def __init__(self, pathname: str):
         self.group_name, table_name = split_pathname(pathname)
         self.banana_table = get_table_model(self.group_name, table_name)

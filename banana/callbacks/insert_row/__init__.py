@@ -9,7 +9,7 @@ from ...models import get_table_model
 from ...utils import raise_error, split_pathname, config, db
 
 
-class InsertRow:
+class InsertRowCallback:
     def __init__(self, pathname, fields):
         self.group_name, table_name = split_pathname(pathname)
         self.banana_table = get_table_model(self.group_name, table_name)

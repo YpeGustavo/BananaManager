@@ -15,11 +15,11 @@ from dash_mantine_components import styles
 
 from .callbacks import (
     InitApp,
-    InsertRow,
-    LoadForm,
-    LoadHistoryCallback,
-    LoadMenuCallback,
-    LoadTableCallback,
+    InsertRowCallback,
+    OpenInsertModalCallback,
+    OpenHistoryModalCallback,
+    LoadSideMenuCallback,
+    LoadMainTableCallback,
     UpdateCellCallback,
 )
 from .layout import Layout
@@ -70,7 +70,7 @@ class Banana(Dash):
             if ctx.triggered_id == "banana--insert-cancel":
                 return False, no_update
 
-            obj = InsertRow(pathname, ctx.states_list[1])
+            obj = InsertRowCallback(pathname, ctx.states_list[1])
             return obj.exec()
 
         @self.callback(
@@ -85,7 +85,7 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def load_main_table(pathname: str, _):
-            obj = LoadTableCallback(pathname)
+            obj = LoadMainTableCallback(pathname)
             return (
                 obj.columnDefs,
                 obj.rowData,
@@ -107,7 +107,7 @@ class Banana(Dash):
                 except Exception as e:
                     raise_error("Error on refreshing table configuration", str(e))
 
-            obj = LoadMenuCallback(pathname)
+            obj = LoadSideMenuCallback(pathname)
             return obj.menu
 
         @self.callback(
@@ -118,7 +118,7 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def open_history_modal(_, pathname: str):
-            obj = LoadHistoryCallback(pathname)
+            obj = OpenHistoryModalCallback(pathname)
             return True, obj.rows
 
         @self.callback(
@@ -129,7 +129,7 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def open_insert_modal(_, pathname: str):
-            obj = LoadForm(pathname)
+            obj = OpenInsertModalCallback(pathname)
             return True, obj.form
 
         @self.callback(

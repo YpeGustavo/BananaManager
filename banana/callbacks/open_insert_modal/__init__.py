@@ -4,7 +4,7 @@ from ...models import BananaTable, get_table_model
 from ...utils import split_pathname
 
 
-class LoadForm:
+class OpenInsertModalCallback:
     def __init__(self, pathname: str):
         group_name, table_name = split_pathname(pathname)
         banana_table = get_table_model(group_name, table_name)

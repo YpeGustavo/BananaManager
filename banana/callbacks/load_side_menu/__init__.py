@@ -5,7 +5,7 @@ import dash_mantine_components as dmc
 from ...utils import config, split_pathname
 
 
-class LoadMenuCallback:
+class LoadSideMenuCallback:
     def __init__(self, pathname: str):
         self.selected_group, self.selected_table = split_pathname(pathname)
 
