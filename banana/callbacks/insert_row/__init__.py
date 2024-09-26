@@ -5,7 +5,7 @@ from sqlalchemy import MetaData, Table
 from sqlalchemy.orm import sessionmaker
 
 from ...history import LogType, post_history
-from ...models import get_table_model
+from ...models.table_models import get_table_model
 from ...utils import raise_error, split_pathname, config, db
 
 

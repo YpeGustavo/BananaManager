@@ -3,7 +3,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel, Field, model_validator, PositiveInt
 
-from .utils import config
+from ..utils import config
 
 
 class BananaOrderBy(BaseModel):

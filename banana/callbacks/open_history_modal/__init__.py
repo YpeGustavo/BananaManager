@@ -6,7 +6,7 @@ from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
 from ...history import LogType, get_history
-from ...models import get_table_model
+from ...models.table_models import get_table_model
 from ...utils import split_pathname
 
 

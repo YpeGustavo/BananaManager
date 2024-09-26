@@ -2,7 +2,7 @@ from dash.exceptions import PreventUpdate
 from sqlalchemy import MetaData, Table, select
 
 from .main_table_query import MainTableQuery
-from ...models import BananaColumn, get_table_model
+from ...models.table_models import BananaColumn, get_table_model
 from ...utils import read_sql, split_pathname, db
 
 

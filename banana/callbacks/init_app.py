@@ -7,7 +7,7 @@ from ..errors import (
     MultipleGroupsWithSameName,
     MultipleTablesWithSameName,
 )
-from ..models import BananaGroup, BananaTable
+from ..models.table_models import BananaGroup, BananaTable
 from ..utils import read_sql, read_yaml, config, db
 
 

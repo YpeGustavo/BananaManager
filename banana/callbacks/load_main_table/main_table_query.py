@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
-from ...models import BananaTable
+from ...models.table_models import BananaTable
 from ...utils import db
 
 
