@@ -1,8 +1,8 @@
 from sqlalchemy import MetaData, Table, select, update
 
+from ...core.history import LogType, post_history
 from ...core.instances import config, db
 from ...core.utils import raise_error, split_pathname
-from ...history import LogType, post_history
 from ...models.table_models import get_table_model
 
 

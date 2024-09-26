@@ -5,9 +5,9 @@ from dash import html
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
-from ...history import LogType, get_history
-from ...models.table_models import get_table_model
+from ...core.history import LogType, get_history
 from ...core.utils import split_pathname
+from ...models.table_models import get_table_model
 
 
 def t(text) -> str:
