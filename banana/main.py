@@ -14,7 +14,6 @@ from dash.exceptions import PreventUpdate
 from dash_mantine_components import styles
 
 from .callbacks import (
-    InitApp,
     InsertRowCallback,
     OpenInsertModalCallback,
     OpenHistoryModalCallback,
@@ -23,6 +22,7 @@ from .callbacks import (
     UpdateCellCallback,
 )
 from .layout import Layout
+from .core.init import InitApp
 from .core.instances import config, server
 from .core.utils import raise_error
 

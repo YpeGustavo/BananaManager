@@ -1,4 +1,3 @@
-from .init_app import InitApp
 from .insert_row import InsertRowCallback
 from .load_main_table import LoadMainTableCallback
 from .load_side_menu import LoadSideMenuCallback
