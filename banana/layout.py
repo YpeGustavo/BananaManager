@@ -3,7 +3,7 @@ from dash_ag_grid import AgGrid
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
-from .utils import config
+from .core.instances import config
 
 
 class Layout(dmc.MantineProvider):

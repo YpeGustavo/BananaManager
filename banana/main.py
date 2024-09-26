@@ -23,7 +23,8 @@ from .callbacks import (
     UpdateCellCallback,
 )
 from .layout import Layout
-from .utils import raise_error, config, server
+from .core.instances import config, server
+from .core.utils import raise_error
 
 
 _dash_renderer._set_react_version("18.2.0")

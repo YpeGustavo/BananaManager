@@ -2,13 +2,14 @@ import json
 
 from sqlalchemy import MetaData, Table, select, func
 
-from ..errors import (
+from ..core.errors import (
     InvalidForeignKey,
     MultipleGroupsWithSameName,
     MultipleTablesWithSameName,
 )
+from ..core.instances import read_yaml, config, db
+from ..core.io import read_sql
 from ..models.table_models import BananaGroup, BananaTable
-from ..utils import read_sql, read_yaml, config, db
 
 
 class InitApp:

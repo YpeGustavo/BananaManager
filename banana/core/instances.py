@@ -1,13 +1,11 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
-from dash import set_props
-from dash_mantine_components import Notification
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import yaml
 
-from .models.config_models import Config
+from ..models.config_models import Config
 
 
 def read_yaml(file) -> dict:
@@ -57,32 +55,3 @@ config = __get_config()
 logger = __get_logger(config)
 server = __get_server(config, logger)
 db = SQLAlchemy(server)
-
-
-def read_sql(query):
-    with db.engine.connect() as conn:
-        result = conn.execute(query)
-        rows = result.fetchall()
-    return rows
-
-
-def raise_error(title: str, message):
-    notify = Notification(
-        title=title,
-        action="show",
-        message=message,
-        color="red",
-        autoClose=False,
-        withBorder=True,
-        radius="md",
-    )
-    set_props("banana--notification", {"children": notify})
-
-
-def split_pathname(pathname: str) -> tuple[str]:
-    try:
-        _, group_name, table_name = pathname.split("/")
-    except ValueError:
-        group_name = None
-        table_name = None
-    return group_name, table_name

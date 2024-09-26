@@ -7,7 +7,7 @@ import dash_mantine_components as dmc
 
 from ...history import LogType, get_history
 from ...models.table_models import get_table_model
-from ...utils import split_pathname
+from ...core.utils import split_pathname
 
 
 def t(text) -> str:

@@ -18,7 +18,7 @@ from sqlalchemy import (
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from .utils import config
+from .core.instances import config
 
 
 Base = declarative_base()

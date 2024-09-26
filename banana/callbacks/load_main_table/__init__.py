@@ -2,8 +2,10 @@ from dash.exceptions import PreventUpdate
 from sqlalchemy import MetaData, Table, select
 
 from .main_table_query import MainTableQuery
+from ...core.instances import db
+from ...core.io import read_sql
+from ...core.utils import split_pathname
 from ...models.table_models import BananaColumn, get_table_model
-from ...utils import read_sql, split_pathname, db
 
 
 class LoadMainTableCallback:
