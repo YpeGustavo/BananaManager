@@ -1,18 +1,22 @@
 import json
 from typing import Any, Optional
 
-from pydantic import BaseModel, Field, model_validator, PositiveInt
+from pydantic import BaseModel, ConfigDict, Field, model_validator, PositiveInt
 from sqlalchemy import inspect
 
 from ..core.instances import config, db
 
 
-class BananaOrderBy(BaseModel):
+class BananaBaseModel(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+
+class BananaOrderBy(BananaBaseModel):
     column: str
     desc: bool = False
 
 
-class BananaForeignKey(BaseModel):
+class BananaForeignKey(BananaBaseModel):
     table_name: str
     column_name: str
     column_display: Optional[str] = None
@@ -26,13 +30,13 @@ class BananaForeignKey(BaseModel):
         return self
 
 
-class BananaPrimaryKey(BaseModel):
+class BananaPrimaryKey(BananaBaseModel):
     columnDef: dict[str, Any] = Field(default_factory=dict)
     display_name: Optional[str] = None
     name: Optional[str] = None
 
 
-class BananaColumn(BaseModel):
+class BananaColumn(BananaBaseModel):
     name: str
     display_name: Optional[str] = None
     foreign_key: Optional[BananaForeignKey] = None
@@ -45,7 +49,7 @@ class BananaColumn(BaseModel):
         return self
 
 
-class BananaTable(BaseModel):
+class BananaTable(BananaBaseModel):
     name: str
     display_name: Optional[str] = None
     schema_name: Optional[str] = None
@@ -83,12 +87,14 @@ class BananaTable(BaseModel):
             )
 
         # Fix names
+        if self.primary_key is None:
+            self.primary_key = BananaPrimaryKey()
         self.primary_key.name = pk_info["constrained_columns"][0]
         if self.primary_key.display_name is None:
             self.primary_key.display_name = self.primary_key.name
 
 
-class BananaGroup(BaseModel):
+class BananaGroup(BananaBaseModel):
     tables: list[BananaTable]
     group_name: Optional[str] = None
     display_order: Optional[int] = None
