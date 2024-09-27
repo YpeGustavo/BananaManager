@@ -2,8 +2,9 @@ import json
 from typing import Any, Optional
 
 from pydantic import BaseModel, Field, model_validator, PositiveInt
+from sqlalchemy import inspect
 
-from ..core.instances import config
+from ..core.instances import config, db
 
 
 class BananaOrderBy(BaseModel):
@@ -26,15 +27,9 @@ class BananaForeignKey(BaseModel):
 
 
 class BananaPrimaryKey(BaseModel):
-    name: str
-    display_name: Optional[str] = None
     columnDef: dict[str, Any] = Field(default_factory=dict)
-
-    @model_validator(mode="after")
-    def validate_model(self):
-        if self.display_name is None:
-            self.display_name = self.name
-        return self
+    display_name: Optional[str] = None
+    name: Optional[str] = None
 
 
 class BananaColumn(BaseModel):
@@ -52,9 +47,9 @@ class BananaColumn(BaseModel):
 
 class BananaTable(BaseModel):
     name: str
-    primary_key: BananaPrimaryKey
     display_name: Optional[str] = None
     schema_name: Optional[str] = None
+    primary_key: Optional[BananaPrimaryKey] = None
     columns: Optional[list[BananaColumn]] = None
     order_by: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
@@ -63,19 +58,34 @@ class BananaTable(BaseModel):
 
     @model_validator(mode="after")
     def validate_model(self):
+        self._primary_key_validation()
+
         if self.display_name is None:
             self.display_name = self.name
 
-        self.defaultColDef = {
-            **config.defaultColDef,
-            **self.defaultColDef,
-        }
-        self.gridOptions = {
-            **config.defaultGridOptions,
-            **self.gridOptions,
-        }
+        # Apply default configs
+        self.defaultColDef = {**config.defaultColDef, **self.defaultColDef}
+        self.gridOptions = {**config.defaultGridOptions, **self.gridOptions}
 
         return self
+
+    def _primary_key_validation(self):
+        # Get primary key
+        inspector = inspect(db.engine)
+        pk_info = inspector.get_pk_constraint(self.name, self.schema_name)
+
+        # Assert if there is a primary key with one column
+        if not pk_info["constrained_columns"]:
+            raise AssertionError(f"Table '{self.name}' has no primary key.")
+        elif len(pk_info["constrained_columns"]) > 1:
+            raise AssertionError(
+                f"Table '{self.name}' primary key must have only one column."
+            )
+
+        # Fix names
+        self.primary_key.name = pk_info["constrained_columns"][0]
+        if self.primary_key.display_name is None:
+            self.primary_key.display_name = self.primary_key.name
 
 
 class BananaGroup(BaseModel):
