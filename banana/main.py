@@ -81,11 +81,10 @@ class Banana(Dash):
             Output("banana--table", "defaultColDef"),
             Output("banana--table", "dashGridOptions"),
             Output("banana--table-title", "children"),
-            Input("banana--location", "pathname"),
             Input("banana--refresh-table", "data"),
-            prevent_initial_call=True,
+            State("banana--location", "pathname"),
         )
-        def load_main_table(pathname: str, _):
+        def load_main_table(_, pathname: str):
             obj = LoadMainTableCallback(pathname)
             return (
                 obj.columnDefs,
