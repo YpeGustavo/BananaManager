@@ -22,7 +22,7 @@ from .callbacks import (
     UpdateCellCallback,
 )
 from .layout import Layout
-from .core.init import InitApp
+from .core.compile import Compiler
 from .core.instances import config, server
 from .core.utils import raise_error
 
@@ -32,7 +32,7 @@ _dash_renderer._set_react_version("18.2.0")
 
 def refresh():
     with server.app_context():
-        obj = InitApp()
+        obj = Compiler()
         obj.refresh()
 
 

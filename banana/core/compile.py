@@ -12,7 +12,7 @@ from .io import read_sql
 from ..models.table_models import BananaGroup, BananaTable
 
 
-class InitApp:
+class Compiler:
     def refresh(self) -> None:
         self._create_data_folder()
         self._create_models_manifest()
