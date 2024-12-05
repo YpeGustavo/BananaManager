@@ -3,9 +3,9 @@ from sqlalchemy import MetaData, Table, select
 
 from .main_table_query import MainTableQuery
 from ...core.instances import db
-from ...core.io import read_sql
 from ...core.utils import split_pathname
 from ...models.table_models import BananaColumn, get_table_model
+from ...queries import read_sql
 
 
 class LoadMainTableCallback:

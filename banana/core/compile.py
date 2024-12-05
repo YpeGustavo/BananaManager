@@ -8,8 +8,8 @@ from .errors import (
     MultipleTablesWithSameName,
 )
 from .instances import read_yaml, config, db
-from .io import read_sql
 from ..models.table_models import BananaGroup, BananaTable
+from ..queries import read_sql
 
 
 class Compiler:
