@@ -13,9 +13,9 @@ def exec_sql(query) -> None:
         session.execute(query)
         session.commit()
 
-    except Exception as e:
+    except Exception as err:
         session.rollback()
-        raise_error("Error on executing query", str(e))
+        raise err
 
     finally:
         session.close()
