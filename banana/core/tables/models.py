@@ -4,7 +4,7 @@ from typing import Any, Optional
 from pydantic import BaseModel, ConfigDict, Field, model_validator, PositiveInt
 from sqlalchemy import inspect
 
-from ..core.instances import config, db
+from ..config import config, db
 
 
 class BananaBaseModel(BaseModel):
@@ -62,8 +62,6 @@ class BananaTable(BananaBaseModel):
 
     @model_validator(mode="after")
     def validate_model(self):
-        self._primary_key_validation()
-
         if self.display_name is None:
             self.display_name = self.name
 
@@ -98,11 +96,3 @@ class BananaGroup(BananaBaseModel):
     tables: list[BananaTable]
     group_name: Optional[str] = None
     display_order: Optional[int] = None
-
-
-def get_table_model(group_name: str, table_name: str) -> BananaTable:
-    json_dir = config.dataPath.joinpath("models.json")
-    with open(json_dir, "r") as f:
-        models = json.load(f)
-        table = BananaTable(**models[group_name]["tables"][table_name])
-    return table

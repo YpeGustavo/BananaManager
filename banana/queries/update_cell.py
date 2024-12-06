@@ -1,8 +1,8 @@
 from sqlalchemy import Table, MetaData, update
 
 from .execute_query import exec_sql
-from ..core.instances import db
-from ..models.table_models import BananaTable
+from ..core.config import db
+from ..core.tables import BananaTable
 
 
 def update_cell(

@@ -1,6 +1,6 @@
 import dash_mantine_components as dmc
 
-from ...models.table_models import BananaTable, get_table_model
+from ...core.tables import BananaTable, get_table_model
 from ...core.utils import split_pathname
 
 

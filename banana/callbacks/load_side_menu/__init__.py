@@ -2,7 +2,7 @@ import json
 
 import dash_mantine_components as dmc
 
-from ...core.instances import config
+from ...core.config import config
 from ...core.utils import split_pathname
 
 

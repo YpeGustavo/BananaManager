@@ -2,8 +2,8 @@ from sqlalchemy import Table, MetaData, select, func
 from sqlalchemy.exc import IntegrityError
 
 from .execute_query import read_sql
-from ..core.instances import db
-from ..models.table_models import BananaTable
+from ..core.config import db
+from ..core.tables import BananaTable
 
 
 def check_duplicated_values(banana_table: BananaTable, column: str) -> dict:

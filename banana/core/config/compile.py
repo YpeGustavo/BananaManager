@@ -3,19 +3,9 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import yaml
 
-from ..models.config_models import Config
-
-
-def read_yaml(file) -> dict:
-    try:
-        with open(file, "r", encoding="utf8") as file:
-            return yaml.safe_load(file)
-    except FileNotFoundError:
-        raise Exception(f"Config file `{file}` not found.")
-    except yaml.YAMLError as exc:
-        raise Exception(f"Error parsing YAML config file: {exc}")
+from .models import Config
+from ..utils import read_yaml
 
 
 def __get_config() -> Config:

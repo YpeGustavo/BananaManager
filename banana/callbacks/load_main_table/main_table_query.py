@@ -1,7 +1,7 @@
 from sqlalchemy import Column, ForeignKey, MetaData, String, Table, select
 
-from ...models.table_models import BananaTable
-from ...core.instances import db
+from ...core.config import db
+from ...core.tables import BananaTable
 
 
 class MainTableQuery:

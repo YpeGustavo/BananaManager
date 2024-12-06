@@ -1,7 +1,7 @@
 from sqlalchemy import Table, MetaData
 
-from ..core.instances import db
-from ..models.table_models import BananaTable
+from ..core.config import db
+from ..core.tables import BananaTable
 
 
 def get_primary_key(banana_table: BananaTable) -> str:

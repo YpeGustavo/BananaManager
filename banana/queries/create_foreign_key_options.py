@@ -3,8 +3,8 @@ from sqlalchemy.exc import IntegrityError
 
 from .check_duplicated_values import check_duplicated_values
 from .execute_query import read_sql
-from ..core.instances import db
-from ..models.table_models import BananaTable
+from ..core.config import db
+from ..core.tables import BananaTable
 
 
 def create_foreign_key_options(

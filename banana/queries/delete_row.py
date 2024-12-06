@@ -1,8 +1,8 @@
 from sqlalchemy import Table, MetaData, delete
 
 from .execute_query import exec_sql
-from ..core.instances import db
-from ..models.table_models import BananaTable
+from ..core.config import db
+from ..core.tables import BananaTable
 
 
 def delete_row(banana_table: BananaTable, row_id: int) -> None:

@@ -2,9 +2,9 @@ from dash.exceptions import PreventUpdate
 from sqlalchemy import MetaData, Table, select
 
 from .main_table_query import MainTableQuery
-from ...core.instances import db
+from ...core.config import db
+from ...core.tables import BananaColumn, get_table_model
 from ...core.utils import split_pathname
-from ...models.table_models import BananaColumn, get_table_model
 from ...queries import read_sql
 
 

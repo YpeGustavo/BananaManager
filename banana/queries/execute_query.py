@@ -1,7 +1,6 @@
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-from ..core.instances import db
-from ..core.utils import raise_error
+from ..core.config import db
 
 
 def exec_sql(query) -> None:
