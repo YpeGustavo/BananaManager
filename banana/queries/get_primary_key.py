@@ -1,10 +1,9 @@
 from sqlalchemy import Table, MetaData
 
 from ..core.config import db
-from ..core.tables import BananaTable
 
 
-def get_primary_key(banana_table: BananaTable) -> str:
+def get_primary_key(table_name: str, schema_name: str) -> str:
     """
     Check if a table has a primary key, ensure it has only one column, and return the column name.
 
@@ -24,9 +23,9 @@ def get_primary_key(banana_table: BananaTable) -> str:
 
     metadata = MetaData(bind=db.engine)
     table = Table(
-        banana_table.name,
+        table_name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=schema_name,
         autoload_with=db.engine,
     )
 
@@ -34,13 +33,11 @@ def get_primary_key(banana_table: BananaTable) -> str:
     primary_key_columns = list(table.primary_key.columns)
 
     if not primary_key_columns:
-        raise ValueError(
-            f"The table '{banana_table.name}' does not have a primary key."
-        )
+        raise ValueError(f"The table '{table_name}' does not have a primary key.")
 
     if len(primary_key_columns) > 1:
         raise ValueError(
-            f"The table '{banana_table.name}' has a composite primary key: {', '.join(col.name for col in primary_key_columns)}"
+            f"The table '{table_name}' has a composite primary key: {', '.join(col.name for col in primary_key_columns)}"
         )
 
     # Return the single primary key column name

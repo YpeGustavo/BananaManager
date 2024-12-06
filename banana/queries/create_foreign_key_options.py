@@ -4,11 +4,11 @@ from sqlalchemy.exc import IntegrityError
 from .check_duplicated_values import check_duplicated_values
 from .execute_query import read_sql
 from ..core.config import db
-from ..core.tables import BananaTable
 
 
 def create_foreign_key_options(
-    banana_table: BananaTable,
+    table_name: str,
+    schema_name: str,
     key_column: str,
     value_column: str,
 ) -> dict:
@@ -33,14 +33,14 @@ def create_foreign_key_options(
         # Output: {'user1': 'email1@example.com', 'user2': 'email2@example.com'}
     """
 
-    check_duplicated_values(banana_table, key_column)
-    check_duplicated_values(banana_table, value_column)
+    check_duplicated_values(table_name, schema_name, key_column)
+    check_duplicated_values(table_name, schema_name, value_column)
 
     metadata = MetaData(bind=db.engine)
     table = Table(
-        banana_table.name,
+        table_name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=schema_name,
         autoload_with=db.engine,
     )
 

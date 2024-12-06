@@ -3,10 +3,9 @@ from sqlalchemy.exc import IntegrityError
 
 from .execute_query import read_sql
 from ..core.config import db
-from ..core.tables import BananaTable
 
 
-def check_duplicated_values(banana_table: BananaTable, column: str) -> dict:
+def check_duplicated_values(table_name: str, schema_name: str, column: str) -> dict:
     """
     Fetch a mapping of unique key-value pairs from two specified columns of a table.
     Raises an error if duplicates are found in either column.
@@ -30,9 +29,9 @@ def check_duplicated_values(banana_table: BananaTable, column: str) -> dict:
 
     metadata = MetaData(bind=db.engine)
     table = Table(
-        banana_table.name,
+        table_name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=schema_name,
         autoload_with=db.engine,
     )
 

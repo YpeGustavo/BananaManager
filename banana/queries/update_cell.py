@@ -2,11 +2,11 @@ from sqlalchemy import Table, MetaData, update
 
 from .execute_query import exec_sql
 from ..core.config import db
-from ..core.tables import BananaTable
 
 
 def update_cell(
-    banana_table: BananaTable,
+    table_name: str,
+    schema_name: str,
     row_id: int,
     column: str,
     new_value,
@@ -33,9 +33,9 @@ def update_cell(
 
     metadata = MetaData(bind=db.engine)
     table = Table(
-        banana_table.name,
+        table_name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=schema_name,
         autoload_with=db.engine,
     )
 

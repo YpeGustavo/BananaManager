@@ -3,10 +3,9 @@ from sqlalchemy.sql import insert
 
 from .execute_query import exec_sql
 from ..core.config import db
-from ..core.tables import BananaTable
 
 
-def insert_row(banana_table: BananaTable, values: dict) -> None:
+def insert_row(table_name: str, schema_name: str, values: dict) -> None:
     """Insert a row into a specified table using SQLAlchemy ORM.
 
     Parameters
@@ -24,9 +23,9 @@ def insert_row(banana_table: BananaTable, values: dict) -> None:
 
     metadata = MetaData(bind=db.engine)
     table = Table(
-        banana_table.name,
+        table_name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=schema_name,
         autoload_with=db.engine,
     )
 
