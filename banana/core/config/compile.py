@@ -3,6 +3,8 @@ from logging.handlers import RotatingFileHandler
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
 
 from .models import Config
 from ..utils import read_yaml
@@ -11,6 +13,10 @@ from ..utils import read_yaml
 def __get_config() -> Config:
     data = read_yaml("config.yaml")
     return Config(**data)
+
+
+def __get_engine(config: Config) -> Engine:
+    return create_engine(config.connection_string)
 
 
 def __get_logger(config: Config) -> logging.Logger:
@@ -42,6 +48,7 @@ def __get_server(config: Config, logger: logging.Logger) -> Flask:
 
 
 config = __get_config()
+engine = __get_engine(config)
 logger = __get_logger(config)
 server = __get_server(config, logger)
 db = SQLAlchemy(server)

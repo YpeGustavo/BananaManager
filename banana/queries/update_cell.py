@@ -31,7 +31,7 @@ def update_cell(
 
     """
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,
