@@ -1,6 +1,6 @@
 from sqlalchemy import Table, MetaData
 
-from ..core.config import db
+from ..core.config import engine
 
 
 def get_primary_key(table_name: str, schema_name: str) -> str:
@@ -21,12 +21,12 @@ def get_primary_key(table_name: str, schema_name: str) -> str:
         # Output: 'id'
     """
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,
         schema=schema_name,
-        autoload_with=db.engine,
+        autoload_with=engine,
     )
 
     # Get the primary key columns

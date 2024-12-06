@@ -27,7 +27,7 @@ def check_duplicated_values(table_name: str, schema_name: str, column: str) -> d
         # Output: {'user1': 'email1@example.com', 'user2': 'email2@example.com'}
     """
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,

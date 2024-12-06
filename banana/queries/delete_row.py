@@ -20,7 +20,7 @@ def delete_row(table_name: str, schema_name: str, row_id: int) -> None:
 
     """
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,

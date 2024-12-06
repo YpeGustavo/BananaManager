@@ -36,7 +36,7 @@ def create_foreign_key_options(
     check_duplicated_values(table_name, schema_name, key_column)
     check_duplicated_values(table_name, schema_name, value_column)
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,

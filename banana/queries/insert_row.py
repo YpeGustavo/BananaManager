@@ -21,7 +21,7 @@ def insert_row(table_name: str, schema_name: str, values: dict) -> None:
 
     """
 
-    metadata = MetaData(bind=db.engine)
+    metadata = MetaData()
     table = Table(
         table_name,
         metadata,
