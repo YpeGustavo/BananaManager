@@ -1,6 +1,7 @@
 from functools import cached_property
 from typing import Any, Literal, Optional
 
+from bidict import bidict
 from pydantic import BaseModel, ConfigDict, Field, model_validator, PositiveInt
 
 from ..config import config
@@ -20,26 +21,12 @@ class BananaDataType(BananaBaseModel):
         "image",
         "list",
     ] = "default"
-    data: Optional[dict] = None
+    data: dict = Field(default_factory=dict)
 
 
 class BananaOrderBy(BananaBaseModel):
     column: str
     desc: bool = False
-
-
-class BananaForeignKey(BananaBaseModel):
-    table_name: str
-    column_name: str
-    column_display: Optional[str] = None
-    schema_name: Optional[str] = None
-    order_by: Optional[list[BananaOrderBy]] = None
-
-    @model_validator(mode="after")
-    def validate_model(self):
-        if self.column_display is None:
-            self.column_display = self.column_name
-        return self
 
 
 class BananaColumn(BananaBaseModel):
@@ -58,14 +45,17 @@ class BananaColumn(BananaBaseModel):
     def data(self) -> dict[str, str]:
         match self.dataType.type:
             case "foreign":
-                return create_foreign_key_options(
+                data = create_foreign_key_options(
                     table_name=self.dataType.data["tableName"],
                     schema_name=self.dataType.data["schemaName"],
                     key_column=self.dataType.data["columnDisplay"],
                     value_column=self.dataType.data["columnName"],
                 )
+
             case _:
-                return self.dataType.data
+                data = self.dataType.data
+
+        return bidict(data)
 
     @cached_property
     def column_def(self) -> dict[str, str]:

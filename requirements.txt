@@ -1,3 +1,4 @@
+bidict
 dash
 dash-ag-grid
 dash-iconify
