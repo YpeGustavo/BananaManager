@@ -62,6 +62,8 @@ class MainTableQuery:
     def define_table(self):
         columns = [Column(self.banana_table.primary_key, String, primary_key=True)]
         for column in self.banana_table.columns:
+            if column.name == self.banana_table.primary_key:
+                continue
             if column.dataType.type == "foreign":
                 fk = ForeignKey(
                     f"{column.dataType.data['tableName']}.{column.dataType.data['columnName']}"
