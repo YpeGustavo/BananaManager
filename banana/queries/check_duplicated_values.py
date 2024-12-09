@@ -36,12 +36,12 @@ def check_duplicated_values(table_name: str, schema_name: str, column: str) -> d
     )
 
     query = (
-        select([table.c[column], func.count()])
+        select(table.c[column], func.count())
         .group_by(table.c[column])
         .having(func.count() > 1)
     )
-    rows = read_sql(query)
 
+    rows = read_sql(query)
     if rows:
         raise IntegrityError(
             f"Duplicate values found in column '{column}': {[row[0] for row in rows]}"

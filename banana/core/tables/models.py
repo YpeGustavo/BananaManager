@@ -56,7 +56,7 @@ class BananaColumn(BananaBaseModel):
 
     @cached_property
     def data(self) -> dict[str, str]:
-        match self.columnDef:
+        match self.dataType.type:
             case "foreign":
                 return create_foreign_key_options(
                     table_name=self.dataType.data["tableName"],
@@ -69,13 +69,13 @@ class BananaColumn(BananaBaseModel):
 
     @cached_property
     def column_def(self) -> dict[str, str]:
-        match self.columnDef:
+        match self.dataType.type:
             case "foreign":
                 col_def = {
                     "headerName": self.display_name,
                     "field": self.name,
                     "cellEditor": "agSelectCellEditor",
-                    "cellEditorParams": {"values": [d for d in self.data]},
+                    "cellEditorParams": {"values": [self.data[d] for d in self.data]},
                 }
                 col_def.update(self.columnDef)
                 return col_def

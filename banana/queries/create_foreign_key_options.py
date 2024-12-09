@@ -1,5 +1,4 @@
-from sqlalchemy import Table, MetaData, select, func
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy import Table, MetaData, select
 
 from .check_duplicated_values import check_duplicated_values
 from .execute_query import read_sql
@@ -46,4 +45,4 @@ def create_foreign_key_options(
 
     query = select(table.c[key_column], table.c[value_column])
     rows = read_sql(query)
-    return {row[key_column]: row[value_column] for row in rows}
+    return {row[1]: row[0] for row in rows}
