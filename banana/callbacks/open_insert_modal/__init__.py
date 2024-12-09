@@ -11,12 +11,7 @@ class OpenInsertModalCallback:
         self.fields = self.__get_fields_metadata(banana_table)
 
     def __get_fields_metadata(self, table: BananaTable):
-        fields = [
-            {
-                "display_name": table.primary_key.display_name,
-                "name": table.primary_key.name,
-            }
-        ]
+        fields = [{"display_name": table.primary_key, "name": table.primary_key}]
         for col in table.columns:
             fields.append({"display_name": col.display_name, "name": col.name})
         return fields

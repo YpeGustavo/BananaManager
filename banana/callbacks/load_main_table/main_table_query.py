@@ -14,29 +14,24 @@ class MainTableQuery:
 
     def construct_query(self):
         table_alias = self.table.alias()
-        columns_query = [
-            table_alias.c[self.banana_table.primary_key.name].label(
-                self.banana_table.primary_key.display_name
-            )
-        ]
+        columns_query = [table_alias.c[self.banana_table.primary_key]]
 
         joins_query = []
-
         for column in self.banana_table.columns:
-            if column.foreign_key is None:
+            if column.dataType.type != "foreign":
                 columns_query.append(
                     table_alias.c[column.name].label(column.display_name)
                 )
             else:
                 fk_table = Table(
-                    column.foreign_key.table_name,
+                    column.dataType.data["tableName"],
                     self.metadata,
                     autoload_with=db.engine,
-                    schema=column.foreign_key.schema_name,
+                    schema=column.dataType.data["schemaName"],
                 )
                 fk_table_alias = fk_table.alias()
                 columns_query.append(
-                    fk_table_alias.c[column.foreign_key.column_display].label(
+                    fk_table_alias.c[column.dataType.data["columnDisplay"]].label(
                         column.display_name
                     )
                 )
@@ -44,7 +39,7 @@ class MainTableQuery:
                     (
                         fk_table_alias,
                         table_alias.c[column.name]
-                        == fk_table_alias.c[column.foreign_key.column_name],
+                        == fk_table_alias.c[column.dataType.data["columnName"]],
                     )
                 )
 
@@ -62,16 +57,14 @@ class MainTableQuery:
 
         if self.banana_table.limit is not None:
             query = query.limit(self.banana_table.limit)
-
         return query
 
     def define_table(self):
-        columns = [Column(self.banana_table.primary_key.name, String, primary_key=True)]
-
+        columns = [Column(self.banana_table.primary_key, String, primary_key=True)]
         for column in self.banana_table.columns:
-            if column.foreign_key:
+            if column.dataType.type == "foreign":
                 fk = ForeignKey(
-                    f"{column.foreign_key.table_name}.{column.foreign_key.column_name}"
+                    f"{column.dataType.data['tableName']}.{column.dataType.data['columnName']}"
                 )
                 columns.append(Column(column.name, String, fk))
             else:
@@ -83,5 +76,4 @@ class MainTableQuery:
             *columns,
             schema=self.banana_table.schema_name,
         )
-
         return table

@@ -31,17 +31,17 @@ class UpdateCellCallback:
             col for col in self.banana_table.columns if col.name == self.col_id
         )
 
-        if banana_column.foreign_key is not None:
+        if banana_column.dataType.type == "foreign":
             foreign_table = Table(
-                banana_column.foreign_key.table_name,
+                banana_column.dataType.data["tableName"],
                 self.metadata,
-                schema=banana_column.foreign_key.schema_name,
+                schema=banana_column.dataType.data["schemaName"],
                 autoload_with=db.engine,
             )
 
             with db.engine.connect() as conn:
-                id_col = foreign_table.c[banana_column.foreign_key.column_name]
-                label = foreign_table.c[banana_column.foreign_key.column_display]
+                id_col = foreign_table.c[banana_column.dataType.data["columnName"]]
+                label = foreign_table.c[banana_column.dataType.data["columnDisplay"]]
 
                 query = (
                     select(id_col)
@@ -57,9 +57,7 @@ class UpdateCellCallback:
             with db.engine.connect() as conn:
                 query = (
                     update(table_data)
-                    .where(
-                        table_data.c[self.banana_table.primary_key.name] == self.row_id
-                    )
+                    .where(table_data.c[self.banana_table.primary_key] == self.row_id)
                     .values({self.col_id: self.new_value})
                 )
                 conn.execute(query)
