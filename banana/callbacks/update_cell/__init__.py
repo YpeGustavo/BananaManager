@@ -2,7 +2,7 @@ from sqlalchemy import MetaData, Table, select, update
 
 from ...core.config import config, db
 from ...core.history import LogType, post_history
-from ...core.tables import get_table_model
+from ...core.tables import tables
 from ...core.utils import raise_error, split_pathname
 
 
@@ -17,7 +17,7 @@ class UpdateCellCallback:
 
         self.metadata = MetaData()
         self.group_name, table_name = split_pathname(pathname)
-        self.banana_table = get_table_model(self.group_name, table_name)
+        self.banana_table = tables(self.group_name, table_name)
 
     def exec(self):
         table_data = Table(

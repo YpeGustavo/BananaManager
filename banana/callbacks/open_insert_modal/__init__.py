@@ -1,13 +1,13 @@
 import dash_mantine_components as dmc
 
-from ...core.tables import BananaTable, get_table_model
+from ...core.tables import BananaTable, tables
 from ...core.utils import split_pathname
 
 
 class OpenInsertModalCallback:
     def __init__(self, pathname: str):
         group_name, table_name = split_pathname(pathname)
-        banana_table = get_table_model(group_name, table_name)
+        banana_table = tables(group_name, table_name)
         self.fields = self.__get_fields_metadata(banana_table)
 
     def __get_fields_metadata(self, table: BananaTable):

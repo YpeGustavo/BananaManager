@@ -4,7 +4,7 @@ from dash import no_update
 
 from ...core.history import LogType, post_history
 from ...core.config import config
-from ...core.tables import get_table_model
+from ...core.tables import tables
 from ...core.utils import raise_error, split_pathname
 from ...queries import insert_row
 
@@ -12,7 +12,7 @@ from ...queries import insert_row
 class InsertRowCallback:
     def __init__(self, pathname, fields):
         self.group_name, table_name = split_pathname(pathname)
-        self.banana_table = get_table_model(self.group_name, table_name)
+        self.banana_table = tables(self.group_name, table_name)
         self.values = self.get_values(fields)
 
     def get_values(self, fields):

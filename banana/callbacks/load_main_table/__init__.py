@@ -3,7 +3,7 @@ from sqlalchemy import MetaData, Table, select
 
 from .main_table_query import MainTableQuery
 from ...core.config import db
-from ...core.tables import BananaColumn, get_table_model
+from ...core.tables import BananaColumn, tables
 from ...core.utils import split_pathname
 from ...queries import read_sql
 
@@ -13,7 +13,7 @@ class LoadMainTableCallback:
         group_name, table_name = split_pathname(pathname)
         if table_name is None:
             raise PreventUpdate
-        self.banana_table = get_table_model(group_name, table_name)
+        self.banana_table = tables(group_name, table_name)
 
     @property
     def columnDefs(self) -> list[dict]:

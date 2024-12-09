@@ -23,6 +23,7 @@ from .callbacks import (
 )
 from .layout import Layout
 from .core.config import config, server
+from .core.tables import tables
 from .core.utils import raise_error
 
 
@@ -31,6 +32,7 @@ _dash_renderer._set_react_version("18.2.0")
 
 class Banana(Dash):
     def __init__(self):
+        tables.refresh_models()
         super().__init__(
             server=server,
             assets_folder=resources.files("banana") / "assets",
@@ -89,10 +91,16 @@ class Banana(Dash):
 
         @self.callback(
             Output("banana--menu", "children"),
-            Input("banana--menu", "style"),
+            Input("banana--refresh-button", "n_clicks"),
             State("banana--location", "pathname"),
         )
         def load_side_menu(_, pathname: str):
+            if ctx.triggered_id == "banana--refresh-button":
+                try:
+                    tables.refresh_models()
+                except Exception as e:
+                    raise_error("Error on refreshing table configuration", str(e))
+
             obj = LoadSideMenuCallback(pathname)
             return obj.menu
 
