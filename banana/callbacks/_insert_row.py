@@ -2,11 +2,11 @@ from time import time
 
 from dash import no_update
 
-from ...core.history import LogType, post_history
-from ...core.config import config
-from ...core.tables import tables
-from ...core.utils import raise_error, split_pathname
-from ...queries import insert_row
+from ..core.history import LogType, post_history
+from ..core.config import config
+from ..core.tables import tables
+from ..core.utils import raise_error, split_pathname
+from ..queries import insert_row
 
 
 class InsertRowCallback:

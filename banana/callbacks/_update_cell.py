@@ -1,9 +1,9 @@
 from sqlalchemy import MetaData, Table, select, update
 
-from ...core.config import config, db
-from ...core.history import LogType, post_history
-from ...core.tables import tables
-from ...core.utils import raise_error, split_pathname
+from ..core.config import config, db
+from ..core.history import LogType, post_history
+from ..core.tables import tables
+from ..core.utils import raise_error, split_pathname
 
 
 class UpdateCellCallback:

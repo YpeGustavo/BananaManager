@@ -1,7 +1,7 @@
 import dash_mantine_components as dmc
 
-from ...core.tables import BananaTable, tables
-from ...core.utils import split_pathname
+from ..core.tables import BananaTable, tables
+from ..core.utils import split_pathname
 
 
 class OpenInsertModalCallback:
