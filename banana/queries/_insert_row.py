@@ -1,7 +1,7 @@
 from sqlalchemy import Table, MetaData
 from sqlalchemy.sql import insert
 
-from .execute_query import exec_sql
+from ._execute_query import exec_sql
 from ..core.config import db
 
 

@@ -1,7 +1,7 @@
 from sqlalchemy import Table, MetaData, select, func
 from sqlalchemy.exc import IntegrityError
 
-from .execute_query import read_sql
+from ._execute_query import read_sql
 from ..core.config import db
 
 

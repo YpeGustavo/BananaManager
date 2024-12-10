@@ -1,7 +1,7 @@
 from sqlalchemy import Table, MetaData, select
 
-from .check_duplicated_values import check_duplicated_values
-from .execute_query import read_sql
+from ._check_duplicated_values import check_duplicated_values
+from ._execute_query import read_sql
 from ..core.config import db
 
 

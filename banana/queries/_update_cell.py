@@ -1,6 +1,6 @@
 from sqlalchemy import Table, MetaData, update
 
-from .execute_query import exec_sql
+from ._execute_query import exec_sql
 from ..core.config import db
 
 

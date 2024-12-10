@@ -18,34 +18,7 @@ class LoadMainTableCallback:
 
     @property
     def rowData(self):
-        col_names = [self.banana_table.primary_key] + [
-            col.name
-            for col in self.banana_table.columns
-            if col.name != self.banana_table.primary_key
-        ]
-
-        rows = select_table(
-            table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
-            columns=col_names,
-        )
-
-        banana_columns_without_pk = [
-            col
-            for col in self.banana_table.columns
-            if col.name != self.banana_table.primary_key
-        ]
-
-        row_data = []
-        for row in rows:
-            col_value = {self.banana_table.primary_key: row[0]}
-            for col, value in zip(banana_columns_without_pk, row[1:]):
-                if col.dataType.type in ("foreign", "enumerator"):
-                    col_value[col.name] = col.data.get(value)
-                else:
-                    col_value[col.name] = value
-            row_data.append(col_value)
-        return row_data
+        return select_table(self.banana_table)
 
     @property
     def rowId(self) -> str:
