@@ -22,7 +22,16 @@ def select_table(banana_table):
     # Write query
     cols = [table.c[column] for column in col_names]
     query = select(*cols).select_from(table)
-    if banana_table.limit:
+
+    if banana_table.order_by is not None:
+        for column in banana_table.order_by:
+            if column.desc:
+                orderby = table.c[column.column].desc()
+            else:
+                orderby = table.c[column.column].asc()
+            query = query.order_by(orderby)
+
+    if banana_table.limit is not None:
         query = query.limit(banana_table.limit)
 
     # Execute
