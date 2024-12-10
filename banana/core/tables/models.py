@@ -67,13 +67,20 @@ class BananaColumn(BananaBaseModel):
                     "cellEditor": "agSelectCellEditor",
                     "cellEditorParams": {"values": [self.data[d] for d in self.data]},
                 }
-                col_def.update(self.columnDef)
-                return col_def
+
+            case "color":
+                col_def = {
+                    "headerName": self.displayName,
+                    "field": self.name,
+                    "cellRenderer": "DMC_ColorInput",
+                    "cellRendererParams": {"field": self.name},
+                }
 
             case _:
                 col_def = {"headerName": self.displayName, "field": self.name}
-                col_def.update(self.columnDef)
-                return col_def
+
+        col_def.update(self.columnDef)
+        return col_def
 
 
 class BananaTable(BananaBaseModel):
