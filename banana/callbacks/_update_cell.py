@@ -1,9 +1,7 @@
-from sqlalchemy import MetaData, Table, select, update
-
-from ..core.config import config, db
+from ..core.config import config
 from ..core.history import LogType, post_history
 from ..core.tables import tables
-from ..core.utils import raise_error, split_pathname
+from ..core.utils import split_pathname
 from ..queries import update_cell
 
 
@@ -24,8 +22,8 @@ class UpdateCellCallback:
         # Inverse values from labels
         banana_column = self.banana_table.get_column_by_name(self.col_id)
         if banana_column.dataType.type in ("foreign", "enumerator"):
-            self.old_value = banana_column.data.inv[self.old_value]
-            self.new_value = banana_column.data.inv[self.new_value]
+            self.old_value = banana_column.data.inv.get(self.old_value)
+            self.new_value = banana_column.data.inv.get(self.new_value)
 
     def exec(self):
         update_cell(
