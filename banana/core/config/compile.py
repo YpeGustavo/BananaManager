@@ -22,6 +22,7 @@ def __get_engine(config: Config) -> Engine:
 def __get_logger(config: Config) -> logging.Logger:
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
     errorlog_path = config.dataPath.joinpath("error.log")
+    errorlog_path.touch(exist_ok=True)
 
     handler = RotatingFileHandler(errorlog_path, maxBytes=10000, backupCount=1)
     handler.setLevel(logging.ERROR)
