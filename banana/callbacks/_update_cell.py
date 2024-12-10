@@ -28,7 +28,7 @@ class UpdateCellCallback:
     def exec(self):
         update_cell(
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
             row_id=self.row_id,
             column=self.col_id,
             new_value=self.new_value,
@@ -38,7 +38,7 @@ class UpdateCellCallback:
             log_type=LogType.UPDATE,
             group_name=self.group_name,
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
             user_name=config.connection.username,
             log_data={
                 "column_name": self.col_id,

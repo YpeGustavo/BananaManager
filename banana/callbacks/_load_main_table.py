@@ -26,7 +26,7 @@ class LoadMainTableCallback:
 
     @property
     def tableTitle(self) -> str:
-        return self.banana_table.display_name
+        return self.banana_table.displayName
 
     @property
     def defaultColDef(self):

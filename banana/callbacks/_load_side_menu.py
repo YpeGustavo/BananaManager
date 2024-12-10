@@ -23,7 +23,7 @@ class LoadSideMenuCallback:
                         "table_name": table,
                         "table_display_name": tables.tables[group]["tables"][
                             table
-                        ].display_name,
+                        ].displayName,
                     }
                 )
 

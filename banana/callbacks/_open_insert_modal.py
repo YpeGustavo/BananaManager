@@ -13,7 +13,7 @@ class OpenInsertModalCallback:
     def __get_fields_metadata(self, table: BananaTable):
         fields = [{"display_name": table.primary_key, "name": table.primary_key}]
         for col in table.columns:
-            fields.append({"display_name": col.display_name, "name": col.name})
+            fields.append({"display_name": col.displayName, "name": col.name})
         return fields
 
     def __get_field(self, field: dict[str, str]):

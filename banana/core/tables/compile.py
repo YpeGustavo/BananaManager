@@ -23,8 +23,8 @@ class Tables:
                     data = read_yaml(file)
                     group = BananaGroup(**data)
                     self.tables[file.stem] = {
-                        "group_name": group.group_name or file.stem,
-                        "display_order": group.display_order,
+                        "group_name": group.groupName or file.stem,
+                        "display_order": group.displayOrder,
                         "tables": dict(),
                     }
 

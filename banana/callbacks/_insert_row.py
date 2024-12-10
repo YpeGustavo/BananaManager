@@ -23,7 +23,7 @@ class InsertRowCallback:
     def exec(self):
         insert_row(
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
             values=self.values,
         )
 
@@ -31,7 +31,7 @@ class InsertRowCallback:
             log_type=LogType.INSERT,
             group_name=self.group_name,
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
             user_name=config.connection.username,
             log_data=self.values,
         )

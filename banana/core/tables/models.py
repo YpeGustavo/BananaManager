@@ -31,14 +31,14 @@ class BananaOrderBy(BananaBaseModel):
 
 class BananaColumn(BananaBaseModel):
     name: str
-    display_name: Optional[str] = None
+    displayName: Optional[str] = None
     dataType: BananaDataType = Field(default_factory=BananaDataType)
     columnDef: dict = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
-        if self.display_name is None:
-            self.display_name = self.name
+        if self.displayName is None:
+            self.displayName = self.name
         return self
 
     @cached_property
@@ -62,7 +62,7 @@ class BananaColumn(BananaBaseModel):
         match self.dataType.type:
             case "enumerator" | "foreign":
                 col_def = {
-                    "headerName": self.display_name,
+                    "headerName": self.displayName,
                     "field": self.name,
                     "cellEditor": "agSelectCellEditor",
                     "cellEditorParams": {"values": [self.data[d] for d in self.data]},
@@ -71,25 +71,25 @@ class BananaColumn(BananaBaseModel):
                 return col_def
 
             case _:
-                col_def = {"headerName": self.display_name, "field": self.name}
+                col_def = {"headerName": self.displayName, "field": self.name}
                 col_def.update(self.columnDef)
                 return col_def
 
 
 class BananaTable(BananaBaseModel):
     name: str
-    display_name: Optional[str] = None
-    schema_name: Optional[str] = None
+    displayName: Optional[str] = None
+    schemaName: Optional[str] = None
     columns: Optional[list[BananaColumn]] = None
-    order_by: Optional[list[BananaOrderBy]] = None
+    orderBy: Optional[list[BananaOrderBy]] = None
     limit: Optional[PositiveInt] = None
     defaultColDef: dict[str, Any] = Field(default_factory=dict)
     gridOptions: dict[str, Any] = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
-        if self.display_name is None:
-            self.display_name = self.name
+        if self.displayName is None:
+            self.displayName = self.name
 
         # Apply default configs
         self.defaultColDef = {**config.defaultColDef, **self.defaultColDef}
@@ -99,7 +99,7 @@ class BananaTable(BananaBaseModel):
 
     @cached_property
     def primary_key(self) -> str:
-        return get_primary_key(self.name, self.schema_name)
+        return get_primary_key(self.name, self.schemaName)
 
     def get_column_by_name(self, column_name: str) -> BananaColumn:
         return next(col for col in self.columns if col.name == column_name)
@@ -107,5 +107,5 @@ class BananaTable(BananaBaseModel):
 
 class BananaGroup(BananaBaseModel):
     tables: list[BananaTable]
-    group_name: Optional[str] = None
-    display_order: Optional[int] = None
+    groupName: Optional[str] = None
+    displayOrder: Optional[int] = None

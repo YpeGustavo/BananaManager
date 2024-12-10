@@ -114,7 +114,7 @@ class OpenHistoryModalCallback:
         history = get_history(
             group_name=self.group_name,
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
         )
 
         if not history:

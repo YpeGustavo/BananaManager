@@ -15,7 +15,7 @@ def select_table(banana_table):
     table = Table(
         banana_table.name,
         metadata,
-        schema=banana_table.schema_name,
+        schema=banana_table.schemaName,
         autoload_with=db.engine,
     )
 
@@ -23,8 +23,8 @@ def select_table(banana_table):
     cols = [table.c[column] for column in col_names]
     query = select(*cols).select_from(table)
 
-    if banana_table.order_by is not None:
-        for column in banana_table.order_by:
+    if banana_table.orderBy is not None:
+        for column in banana_table.orderBy:
             if column.desc:
                 orderby = table.c[column.column].desc()
             else:
