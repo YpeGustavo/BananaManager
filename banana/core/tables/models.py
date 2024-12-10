@@ -33,7 +33,7 @@ class BananaColumn(BananaBaseModel):
     name: str
     display_name: Optional[str] = None
     dataType: BananaDataType = Field(default_factory=BananaDataType)
-    columnDef: dict[str, Any] = Field(default_factory=dict)
+    columnDef: dict = Field(default_factory=dict)
 
     @model_validator(mode="after")
     def validate_model(self):
@@ -60,7 +60,7 @@ class BananaColumn(BananaBaseModel):
     @cached_property
     def column_def(self) -> dict[str, str]:
         match self.dataType.type:
-            case "foreign":
+            case "enumerator" | "foreign":
                 col_def = {
                     "headerName": self.display_name,
                     "field": self.name,
