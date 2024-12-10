@@ -5,7 +5,7 @@ from dash import no_update
 from ..core.history import LogType, post_history
 from ..core.config import config
 from ..core.tables import tables
-from ..core.utils import raise_error, split_pathname
+from ..core.utils import split_pathname
 from ..queries import insert_row
 
 
@@ -21,24 +21,19 @@ class InsertRowCallback:
         }
 
     def exec(self):
-        try:
-            insert_row(
-                table_name=self.banana_table.name,
-                schema_name=self.banana_table.schema_name,
-                values=self.values,
-            )
+        insert_row(
+            table_name=self.banana_table.name,
+            schema_name=self.banana_table.schema_name,
+            values=self.values,
+        )
 
-            post_history(
-                log_type=LogType.INSERT,
-                group_name=self.group_name,
-                table_name=self.banana_table.name,
-                schema_name=self.banana_table.schema_name,
-                user_name=config.connection.username,
-                log_data=self.values,
-            )
+        post_history(
+            log_type=LogType.INSERT,
+            group_name=self.group_name,
+            table_name=self.banana_table.name,
+            schema_name=self.banana_table.schema_name,
+            user_name=config.connection.username,
+            log_data=self.values,
+        )
 
-            return False, int(time())
-
-        except Exception as e:
-            raise_error("Error inserting row", str(e.orig))
-            return no_update, no_update
+        return False, int(time())
