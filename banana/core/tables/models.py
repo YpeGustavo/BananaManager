@@ -42,7 +42,7 @@ class BananaColumn(BananaBaseModel):
         return self
 
     @cached_property
-    def data(self) -> dict[str, str]:
+    def data(self) -> bidict:
         match self.dataType.type:
             case "foreign":
                 data = create_foreign_key_options(
@@ -100,6 +100,9 @@ class BananaTable(BananaBaseModel):
     @cached_property
     def primary_key(self) -> str:
         return get_primary_key(self.name, self.schema_name)
+
+    def get_column_by_name(self, column_name: str) -> BananaColumn:
+        return next(col for col in self.columns if col.name == column_name)
 
 
 class BananaGroup(BananaBaseModel):
