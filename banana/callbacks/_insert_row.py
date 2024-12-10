@@ -22,7 +22,12 @@ class InsertRowCallback:
 
     def exec(self):
         try:
-            insert_row(self.banana_table, self.values)
+            insert_row(
+                table_name=self.banana_table.name,
+                schema_name=self.banana_table.schema_name,
+                values=self.values,
+            )
+
             post_history(
                 log_type=LogType.INSERT,
                 group_name=self.group_name,
@@ -31,6 +36,7 @@ class InsertRowCallback:
                 user_name=config.connection.username,
                 log_data=self.values,
             )
+
             return False, int(time())
 
         except Exception as e:
