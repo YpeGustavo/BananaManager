@@ -24,9 +24,11 @@ dagcomponentfuncs.DMC_ColorInput = function (props) {
             {
                 value: data[field],
                 onChangeEnd,
+                format: 'hex',
+                withPicker: false,
                 style: {
                     margin: "0",
-                    width: "90%",
+                    width: "100%",
                 },
             }
         )
