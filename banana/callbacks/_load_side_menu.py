@@ -1,9 +1,8 @@
-import json
-
 import dash_mantine_components as dmc
 
-from ...core.instances import config
-from ...core.utils import split_pathname
+from ..core.config import config
+from ..core.tables import tables
+from ..core.utils import split_pathname
 
 
 class LoadSideMenuCallback:
@@ -11,30 +10,28 @@ class LoadSideMenuCallback:
         self.selected_group, self.selected_table = split_pathname(pathname)
 
     def _get_models(self) -> list[tuple]:
-        json_dir = config.dataPath.joinpath("models.json")
-        with open(json_dir, "r") as f:
-            models = json.load(f)
-
-        groups = sorted(models, key=lambda d: models[d]["display_order"])
+        groups = sorted(
+            tables.tables, key=lambda group: tables.tables[group]["display_order"]
+        )
 
         menu = []
         for group in groups:
-            tables = []
-            for table in models[group]["tables"]:
-                tables.append(
+            itens = []
+            for table in tables.tables[group]["tables"]:
+                itens.append(
                     {
                         "table_name": table,
-                        "table_display_name": models[group]["tables"][table][
-                            "display_name"
-                        ],
+                        "table_display_name": tables.tables[group]["tables"][
+                            table
+                        ].displayName,
                     }
                 )
 
             menu.append(
                 {
                     "group_name": group,
-                    "group_display_name": models[group]["group_name"],
-                    "tables": tables,
+                    "group_display_name": tables.tables[group]["group_name"],
+                    "tables": itens,
                 }
             )
 

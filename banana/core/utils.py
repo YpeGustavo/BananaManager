@@ -1,5 +1,6 @@
 from dash import set_props
 from dash_mantine_components import Notification
+import yaml
 
 
 def raise_error(title: str, message):
@@ -13,6 +14,16 @@ def raise_error(title: str, message):
         radius="md",
     )
     set_props("banana--notification", {"children": notify})
+
+
+def read_yaml(file) -> dict:
+    try:
+        with open(file, "r", encoding="utf8") as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        raise Exception(f"Config file `{file}` not found.")
+    except yaml.YAMLError as exc:
+        raise Exception(f"Error parsing YAML config file: {exc}")
 
 
 def split_pathname(pathname: str) -> tuple[str]:

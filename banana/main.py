@@ -22,23 +22,17 @@ from .callbacks import (
     UpdateCellCallback,
 )
 from .layout import Layout
-from .core.init import InitApp
-from .core.instances import config, server
+from .core.config import config, server
+from .core.tables import tables
 from .core.utils import raise_error
 
 
 _dash_renderer._set_react_version("18.2.0")
 
 
-def refresh():
-    with server.app_context():
-        obj = InitApp()
-        obj.refresh()
-
-
 class Banana(Dash):
     def __init__(self):
-        refresh()
+        tables.refresh_models()
         super().__init__(
             server=server,
             assets_folder=resources.files("banana") / "assets",
@@ -70,9 +64,12 @@ class Banana(Dash):
         def insert_row(_confirm, _cancel, pathname, _fields):
             if ctx.triggered_id == "banana--insert-cancel":
                 return False, no_update
-
-            obj = InsertRowCallback(pathname, ctx.states_list[1])
-            return obj.exec()
+            try:
+                obj = InsertRowCallback(pathname, ctx.states_list[1])
+                return obj.exec()
+            except Exception as err:
+                raise_error("Error inserting new row", str(err))
+                return no_update, no_update
 
         @self.callback(
             Output("banana--table", "columnDefs"),
@@ -81,35 +78,42 @@ class Banana(Dash):
             Output("banana--table", "defaultColDef"),
             Output("banana--table", "dashGridOptions"),
             Output("banana--table-title", "children"),
-            Input("banana--location", "pathname"),
             Input("banana--refresh-table", "data"),
-            prevent_initial_call=True,
+            State("banana--location", "pathname"),
         )
-        def load_main_table(pathname: str, _):
-            obj = LoadMainTableCallback(pathname)
-            return (
-                obj.columnDefs,
-                obj.rowData,
-                obj.rowId,
-                obj.defaultColDef,
-                obj.gridOptions,
-                obj.tableTitle,
-            )
+        def load_main_table(_, pathname: str):
+            try:
+                obj = LoadMainTableCallback(pathname)
+                return (
+                    obj.columnDefs,
+                    obj.rowData,
+                    obj.rowId,
+                    obj.defaultColDef,
+                    obj.gridOptions,
+                    obj.tableTitle,
+                )
+            except Exception as err:
+                raise_error("Error loading selected table", str(err))
+                return no_update, no_update, no_update, no_update, no_update, no_update
 
         @self.callback(
             Output("banana--menu", "children"),
-            Input("banana--location", "pathname"),
             Input("banana--refresh-button", "n_clicks"),
+            State("banana--location", "pathname"),
         )
-        def load_side_menu(pathname: str, _):
+        def load_side_menu(_, pathname: str):
             if ctx.triggered_id == "banana--refresh-button":
                 try:
-                    refresh()
+                    tables.refresh_models()
                 except Exception as e:
-                    raise_error("Error on refreshing table configuration", str(e))
-
-            obj = LoadSideMenuCallback(pathname)
-            return obj.menu
+                    raise_error("Error refreshing table configuration", str(e))
+                    return no_update
+            try:
+                obj = LoadSideMenuCallback(pathname)
+                return obj.menu
+            except Exception as err:
+                raise_error("Error loading side menu", str(err))
+                return no_update
 
         @self.callback(
             Output("banana--history-modal", "opened"),
@@ -119,8 +123,12 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def open_history_modal(_, pathname: str):
-            obj = OpenHistoryModalCallback(pathname)
-            return True, obj.rows
+            try:
+                obj = OpenHistoryModalCallback(pathname)
+                return True, obj.rows
+            except Exception as err:
+                raise_error("Error loading history data", str(err))
+                return no_update, no_update
 
         @self.callback(
             Output("banana--insert-modal", "opened", allow_duplicate=True),
@@ -130,14 +138,21 @@ class Banana(Dash):
             prevent_initial_call=True,
         )
         def open_insert_modal(_, pathname: str):
-            obj = OpenInsertModalCallback(pathname)
-            return True, obj.form
+            try:
+                obj = OpenInsertModalCallback(pathname)
+                return True, obj.form
+            except Exception as err:
+                raise_error("Error loading insertion form", str(err))
+                return no_update, no_update
 
         @self.callback(
             Input("banana--table", "cellValueChanged"),
             State("banana--location", "pathname"),
         )
         def update_cell(_, pathname):
-            data = ctx.inputs["banana--table.cellValueChanged"]
-            obj = UpdateCellCallback(data, pathname)
-            obj.exec()
+            try:
+                data = ctx.inputs["banana--table.cellValueChanged"]
+                obj = UpdateCellCallback(data, pathname)
+                obj.exec()
+            except Exception as err:
+                raise_error("Error updating value", str(err))

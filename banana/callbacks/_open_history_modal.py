@@ -5,9 +5,9 @@ from dash import html
 from dash_iconify import DashIconify
 import dash_mantine_components as dmc
 
-from ...core.history import LogType, get_history
-from ...core.utils import split_pathname
-from ...models.table_models import get_table_model
+from ..core.tables import tables
+from ..core.history import LogType, get_history
+from ..core.utils import split_pathname
 
 
 def t(text) -> str:
@@ -20,7 +20,7 @@ def t(text) -> str:
 class OpenHistoryModalCallback:
     def __init__(self, pathname: str):
         self.group_name, table_name = split_pathname(pathname)
-        self.banana_table = get_table_model(self.group_name, table_name)
+        self.banana_table = tables(self.group_name, table_name)
 
     def __text(self, upper, lower) -> dmc.Stack:
         return dmc.Stack(
@@ -114,7 +114,7 @@ class OpenHistoryModalCallback:
         history = get_history(
             group_name=self.group_name,
             table_name=self.banana_table.name,
-            schema_name=self.banana_table.schema_name,
+            schema_name=self.banana_table.schemaName,
         )
 
         if not history:
