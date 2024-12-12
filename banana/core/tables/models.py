@@ -46,10 +46,10 @@ class BananaColumn(BananaBaseModel):
         match self.dataType.type:
             case "foreign":
                 data = create_foreign_key_options(
-                    table_name=self.dataType.data["tableName"],
-                    schema_name=self.dataType.data["schemaName"],
-                    key_column=self.dataType.data["columnDisplay"],
-                    value_column=self.dataType.data["columnName"],
+                    table_name=self.dataType.data.get("tableName"),
+                    schema_name=self.dataType.data.get("schemaName"),
+                    key_column=self.dataType.data.get("columnDisplay"),
+                    value_column=self.dataType.data.get("columnName"),
                 )
 
             case _:
